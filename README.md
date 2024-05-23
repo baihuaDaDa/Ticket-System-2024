@@ -63,7 +63,7 @@ iostream, string, cstdio, cmath, string, fstream, filesystem
 
 ## 管理系统 - 8%
 
-见 [管理系统文档](management_system.md)。
+见 [管理系统文档](Document/management_system.md)。
 
 数据压缩包下发在群里。
 
@@ -73,7 +73,7 @@ iostream, string, cstdio, cmath, string, fstream, filesystem
 
 ## Bonus
 
-见 [Bonus 文档](bonus.md)。
+见 [Bonus 文档](Document/bonus.md)。
 
 准备自行设计并实现其他 bonus 的同学可以联系助教协商。
 
