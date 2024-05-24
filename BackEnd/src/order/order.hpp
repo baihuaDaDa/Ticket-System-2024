@@ -1,14 +1,21 @@
 #ifndef TICKET_SYSTEM_ORDER_HPP
 #define TICKET_SYSTEM_ORDER_HPP
 
-#include "../cmdprocessor.hpp"
+#include "../db/bpt.hpp"
+#include "../typebase.hpp"
 #include "../time.hpp"
 #include "../lib/STLite/utility.hpp"
 
 namespace ticket {
 
+    struct OrderIndex {
+        int timeTag;
+        int addr;
+
+    };
+
     struct Order {
-        enum Status {success, pending, refunded};
+        int status;
         trainIDType trainID;
         baihua::pair<staNameType, Time> from;
         baihua::pair<staNameType, Time> to;
@@ -17,7 +24,31 @@ namespace ticket {
 
     };
 
+    struct QueueOrderIndex {
+        int trainID;
+        Date date;
+
+    };
+
+    struct QueueOrder {
+        int timeTag;
+        int addr;
+
+    };
+
+    int CmpOrderIndex(const OrderIndex &lhs, const OrderIndex &rhs);
+
+    int CmpQueueOrderIndex(const QueueOrderIndex &lhs, const QueueOrderIndex &rhs);
+
+    int CmpQueueOrder(const QueueOrder &lhs, const QueueOrder &rhs);
+
     class OrderManager {
+    private:
+        baihua::BPT<ull, OrderIndex, baihua::CmpUll, CmpOrderIndex> orderMap;
+        baihua::BPT<QueueOrderIndex, QueueOrder, CmpQueueOrderIndex, CmpQueueOrder> queueOrderMap;
+        baihua::Database<Order> orderData;
+
+    public:
 
     };
 

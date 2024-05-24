@@ -9,4 +9,7 @@ include_directories(db)
 include_directories(lib)
 
 add_executable(code main.cpp
-        lib/mytools.hpp)
+        src/system/system.cpp
+        src/order/order.cpp
+        src/user/user.cpp
+        src/train/train.cpp)

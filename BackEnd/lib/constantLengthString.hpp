@@ -22,19 +22,19 @@ namespace baihua {
         }
     };
 
-    template<int length>
+    template<size_t length>
     class ConstLenStr;
 
-    template<int length>
+    template<size_t length>
     int CmpStr(const ConstLenStr<length> &lhs, const ConstLenStr<length> &rhs);
 
-    template<int length>
+    template<size_t length>
     std::ostream &operator<<(std::ostream &out, const ConstLenStr<length> &str1);
 
-    template<int length>
+    template<size_t length>
     std::istream &operator>>(std::istream &in, ConstLenStr<length> &str1);
 
-    template<int length>
+    template<size_t length>
     class ConstLenStr {
     private:
         char str[length] = {};
@@ -108,7 +108,7 @@ namespace baihua {
             return *this;
         }
 
-        char &operator[](int index) {
+        char &operator[](size_t index) {
             if (index >= length) {
                 throw StringIndexingError();
             }
@@ -120,7 +120,7 @@ namespace baihua {
         friend std::istream &operator>><length>(std::istream &in, ConstLenStr<length> &str1);
     };
 
-    template<int length>
+    template<size_t length>
     std::ostream &operator<<(std::ostream &out, const ConstLenStr<length> &str1) {
         for (size_t i = 0; i < str1.size; i++) {
             out << str1.str[i];
@@ -128,17 +128,17 @@ namespace baihua {
         return out;
     }
 
-    template<int length>
+    template<size_t length>
     std::istream &operator>>(std::istream &in, ConstLenStr<length> &str1) {
         in >> str1.str;
-        int i = 0;
+        size_t i = 0;
         for (i = 0; i < length; ++i)
             if (str1.str[i] == '\0') break;
         str1.size = i;
         return in;
     }
 
-    template<int length>
+    template<size_t length>
     int CmpStr(const ConstLenStr<length> &lhs, const ConstLenStr<length> &rhs) {
         int flag = std::strcmp(lhs.str, rhs.str);
         if (flag < 0) return -1;
