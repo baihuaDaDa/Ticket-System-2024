@@ -79,9 +79,9 @@ namespace ticket {
         bool buy_ticket_if_success(const ull &_i, const Date &_d, const int _n, const staNameType &_f,
                                    const staNameType &_t, const bool _q);
 
-        void refund_ticket(const ull &_i, const Date &_d, const int _n_ref, const staNameType &_f_ref,
-                           const staNameType &_t_ref, const int _n_que, const staNameType &_f_que,
-                           const staNameType &_t_que);
+        void refund_ticket(const ull &_i, const Date &_d, const int _n_ref, const int _f_ref,
+                           const int _t_ref, const int _n_que, const int _f_que,
+                           const int _t_que);
 
     };
 

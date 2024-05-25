@@ -2,16 +2,21 @@
 
 namespace ticket {
 
+    // 按orderNo降序
     int CmpOrderIndex(const OrderIndex &lhs, const OrderIndex &rhs) {
-
+        if (lhs.orderNo != rhs.orderNo) return -baihua::CmpInt(lhs.orderNo, rhs.orderNo);
+        else return baihua::CmpInt(lhs.addr, rhs.addr);
     }
 
     int CmpQueueOrderIndex(const QueueOrderIndex &lhs, const QueueOrderIndex &rhs) {
-
+        if (lhs.trainID != rhs.trainID) return baihua::CmpUll(lhs.trainID, rhs.trainID);
+        else return CmpDate(lhs.date, rhs.date);
     }
 
+    // 按timeTag升序
     int CmpQueueOrder(const QueueOrder &lhs, const QueueOrder &rhs) {
-
+        if (lhs.timeTag != rhs.timeTag) return baihua::CmpInt(lhs.timeTag, rhs.timeTag);
+        else return baihua::CmpInt(lhs.addr, rhs.addr);
     }
 
     void OrderManager::buy_ticket(bool queue, const ull &_u, const trainIDType &_i, const Date &_d, const int _n,
@@ -35,20 +40,20 @@ namespace ticket {
         }
         Order order;
         orderData.SingleRead(order, orderIndex[_n - 1].addr);
-        switch (order.status) {
-            case 0:
+        if (order.status == 0) {
+            order.status = 2;
+            orderData.SingleUpdate(order, orderIndex[_n - 1].addr);
+            QueueOrderIndex queueOrderIndex{baihua::hash(order.trainID), order.startTime};
+        } else if (order.status == 1) {
+            order.status = 2;
+            orderData.SingleUpdate(order, orderIndex[_n - 1].addr);
+            QueueOrderIndex queueOrderIndex{baihua::hash(order.trainID), order.startTime};
 
-                break;
-            case 1:
-                order.status = 2;
-                orderData.SingleUpdate(order, orderIndex[_n - 1].addr);
-                QueueOrderIndex queueOrderIndex{baihua::hash(order.trainID), order.};
-                auto queueOrder = queueOrderMap.Find(QueueOrderIndex());
-                break;
-            case 2:
-                os << -1;
-                ret.first.first = false;
-                return ret;
+            auto queueOrder = queueOrderMap.Find(QueueOrderIndex());
+        } else {
+            os << -1;
+            ret.first.first = false;
+            return ret;
         }
     }
 

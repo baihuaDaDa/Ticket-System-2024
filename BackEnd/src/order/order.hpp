@@ -18,6 +18,7 @@ namespace ticket {
     struct Order {
         int status;
         trainIDType trainID;
+        Date startTime;
         baihua::pair<staNameType, Time> from;
         baihua::pair<staNameType, Time> to;
         int price;
