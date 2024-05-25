@@ -164,6 +164,13 @@ namespace baihua {
             return std::move(result);
         }
 
+        // promise there exists (index, origin_value)
+        void Modify(const Index &index, const Value &origin_value, const Value &new_value) {
+            Delete(index, origin_value);
+            Insert(index, new_value);
+        }
+
+
     private:
         // Find the block that possibly contains the element.
         // the last key that is smaller than or equal to the element

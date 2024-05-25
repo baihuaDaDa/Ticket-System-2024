@@ -15,6 +15,11 @@ namespace ticket {
         OrderManager orderManager;
         TrainManager trainManager;
 
+    public:
+        void exit();
+
+        void claen();
+
     };
 
 }

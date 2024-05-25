@@ -10,7 +10,7 @@ namespace ticket {
 
     struct UserIndex {
         int addr;
-        int privilege;
+        int privilege; // privilege也可以放在User里
 
     };
 
@@ -46,10 +46,11 @@ namespace ticket {
 
         void query_profile(std::ostream &os, const ull &_c, const ull &_u, const uidType &username);
 
-        // _g == 11 if there is no _g input.
         void modify_profile(std::ostream &os, const ull &_c, const ull &_u, const baihua::pair<bool, pwdType> &_p,
                             const baihua::pair<bool, uNameType> &_n, const baihua::pair<bool, mailType> &_m,
-                            const int _g);
+                            const baihua::pair<bool, int> &_g);
+
+        bool if_login(const ull &_u);
 
     };
 

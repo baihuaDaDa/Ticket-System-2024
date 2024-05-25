@@ -2,4 +2,12 @@
 
 namespace ticket {
 
+    void system::exit() {
+
+    }
+
+    void system::claen() {
+
+    }
+
 }

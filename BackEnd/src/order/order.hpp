@@ -5,12 +5,13 @@
 #include "../typebase.hpp"
 #include "../time.hpp"
 #include "../lib/STLite/utility.hpp"
+#include "../lib/mytools.hpp"
 
 namespace ticket {
 
     struct OrderIndex {
-        int timeTag;
         int addr;
+        int orderNo;
 
     };
 
@@ -25,7 +26,7 @@ namespace ticket {
     };
 
     struct QueueOrderIndex {
-        int trainID;
+        ull trainID;
         Date date;
 
     };
@@ -33,6 +34,13 @@ namespace ticket {
     struct QueueOrder {
         int timeTag;
         int addr;
+
+    };
+
+    struct ModifyOrder {
+        staNameType from;
+        staNameType to;
+        int num;
 
     };
 
@@ -49,6 +57,13 @@ namespace ticket {
         baihua::Database<Order> orderData;
 
     public:
+        void buy_ticket(bool queue, const ull &_u, const trainIDType &_i, const Date &_d, const int _n,
+                        const staNameType &_f, const staNameType &_t);
+
+        void query_order(std::ostream &os, const ull &_u);
+
+        baihua::pair<baihua::pair<bool, ModifyOrder>, baihua::pair<bool, ModifyOrder>>
+        refund_ticket(std::ostream &os, const ull &_u, const int _n);
 
     };
 

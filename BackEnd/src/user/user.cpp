@@ -86,22 +86,40 @@ namespace ticket {
     }
 
     // 已登录的userList别忘了改权限
-    // TODO 如果自己修改自己的权限，但是修改成同样的值，是否算修改失败？
-    // TODO 如果修改成同样的值修改成功后是否需要输出？
+    // 如果自己修改自己的权限，但是修改成同样的值，是否算修改失败？ 当然算，按规则来。
+    // 如果修改成同样的值修改成功后是否需要输出？ 当然。
     void UserManager::modify_profile(std::ostream &os, const ticket::ull &_c, const ticket::ull &_u,
                                      const baihua::pair<bool, pwdType> &_p, const baihua::pair<bool, uNameType> &_n,
-                                     const baihua::pair<bool, mailType> &_m, const int _g) {
+                                     const baihua::pair<bool, mailType> &_m, const baihua::pair<bool, int> &_g) {
         auto iter = userList.find(_c);
-        if (iter == userList.end()) {
+        if (iter == userList.end() || (_g.first && _g.second >= iter->second)) {
             os << -1;
             return;
         }
         auto userIndex = userMap.Find(_u);
-        if (userIndex.empty() || (userIndex[0].privilege >= iter->second && _u != _c) || _g > ) {
+        if (userIndex.empty() || (userIndex[0].privilege >= iter->second && _u != _c)) {
             os << -1;
             return;
         }
+        User user;
+        userData.SingleRead(user, userIndex[0].addr);
+        if (_p.first || _n.first || _m.first) {
+            if (_p.first) os << (user.pwd = _p.second) << ' ';
+            if (_n.first) os << (user.uName = _n.second) << ' ';
+            if (_m.first) os << (user.mail = _m.second) << ' ';
+            userData.SingleUpdate(user, userIndex[0].addr);
+        }
+        if (_g.first) {
+            iter->second = _g.second;
+            userMap.Delete(_u, userIndex[0]);
+            os << (userIndex[0].privilege = _g.second);
+            userMap.Insert(_u, userIndex[0]);
+        }
+    }
 
+    bool UserManager::if_login(const ull &_u) {
+        if (userList.find(_u) == userList.end()) return false;
+        else return true;
     }
 
 }

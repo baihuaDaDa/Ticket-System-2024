@@ -11,6 +11,8 @@ namespace ticket {
         int hour;
         int minute;
 
+        Clock() : hour(0), minute(0) {}
+
         Clock(const Clock &clock) : hour(clock.hour), minute(clock.minute) {}
 
         Clock(int hh, int mm) : hour(hh), minute(mm) {}
@@ -34,6 +36,8 @@ namespace ticket {
         int month;
         int day;
 
+        Date() : month(0), day(0) {}
+
         Date(const Date &date) : month(date.month), day(date.day) {}
 
         Date(int mm, int dd) : month(mm), day(dd) {}
@@ -56,6 +60,8 @@ namespace ticket {
     struct Time {
         Clock clock;
         Date date;
+
+        Time() : clock(), date() {}
 
         Time(const Date &_date, const Clock &_clock) : clock(_clock), date(_date) {}
 
