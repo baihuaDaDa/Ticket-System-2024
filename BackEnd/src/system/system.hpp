@@ -18,7 +18,7 @@ namespace ticket {
     public:
         void exit();
 
-        void claen();
+        void clean();
 
     };
 

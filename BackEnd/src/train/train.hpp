@@ -8,6 +8,12 @@
 
 namespace ticket {
 
+    struct TrainAddr {
+        int addr;
+        bool released;
+
+    };
+
     struct Train {
         int staNum;
         stationsType stations;
@@ -18,31 +24,27 @@ namespace ticket {
         oType stopoverTimes;
         baihua::pair<Date, Date> saleDate;
         char type;
-        bool released;
 
     };
 
-    struct DailyTrainIndex {
-        ull trainID;
-        Date startTime;
-
-    };
-
+    // save the head index of a sequence of daily trains
     struct DailyTrainAddr {
         int trainAddr;
         int seatAddr;
+        baihua::pair<Date, Date> saleDate;
 
     };
 
     struct Station {
         ull trainID;
         Clock arriveClock;
+        int stopoverTime;
         int price; // from this station to the next
         int time; // from the start station to this one
 
     };
 
-    int CmpDailyTrainIndex(const DailyTrainIndex &lhs, const DailyTrainIndex &rhs);
+    int CmpTrainAddr(const TrainAddr &lhs, const TrainAddr &rhs);
 
     int CmpDailyTrainAddr(const DailyTrainAddr &lhs, const DailyTrainAddr &rhs);
 
@@ -50,9 +52,9 @@ namespace ticket {
 
     class TrainManager {
     private:
-        baihua::BPT<ull, int, baihua::CmpUll, baihua::CmpInt> trainMap;
+        baihua::BPT<ull, TrainAddr, baihua::CmpUll, CmpTrainAddr> trainMap;
         baihua::Database<Train> trainData;
-        baihua::BPT<DailyTrainIndex, DailyTrainAddr, CmpDailyTrainIndex, CmpDailyTrainAddr> dailyTrainMap;
+        baihua::BPT<ull, DailyTrainAddr, baihua::CmpUll, CmpDailyTrainAddr> dailyTrainMap;
         baihua::Database<seatsType> dailyTrainData;
         baihua::BPT<ull, Station, baihua::CmpUll, CmpStation> staData;
 
@@ -61,11 +63,11 @@ namespace ticket {
                        const pricesType &_p, const Clock &_x, const ttsType &_t, const oType &_o,
                        const baihua::pair<Date, Date> &_d, char _y);
 
-        void delete_train(const ull &_i);
+        void delete_train(std::ostream &os, const ull &_i);
 
-        void release_train(const ull &_i);
+        void release_train(std::ostream &os, const ull &_i);
 
-        void query_train(const ull &_i, const Date &_d);
+        void query_train(std::ostream &os, const ull &_i, const Date &_d);
 
         void query_ticket(const ull &_s, const ull &_t, const Date &_d, bool _p);
 
@@ -76,7 +78,7 @@ namespace ticket {
 
         void write_seats(int addr, seatsType &seats);
 
-        void read_seats(seatsType &seats, const ull &_i, const Date &_d);
+        int read_seats(seatsType &seats, const ull &_i, const Date &_d);
 
     };
 

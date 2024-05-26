@@ -6,7 +6,8 @@
 
 namespace ticket {
 
-    constexpr int argNum_Max = 26, uid_Max = 21, pwd_Max = 31, uName_Max = 21, mail_Max = 31, trainID_Max = 21, staName_Max = 41, staNum_Max = 101, cmdNum_Max = 16;
+    // 0-base
+    constexpr int argNum_Max = 26, uid_Max = 21, pwd_Max = 31, uName_Max = 21, mail_Max = 31, trainID_Max = 21, staName_Max = 41, staNum_Max = 100, cmdNum_Max = 16, trainNum_Max = 92;
 
     using ull = unsigned long long;
 

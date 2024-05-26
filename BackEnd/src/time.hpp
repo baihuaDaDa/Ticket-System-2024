@@ -43,8 +43,10 @@ namespace ticket {
         friend baihua::pair<Clock, int> _add(const Clock &clock, const int &_minute) {
             Clock ret(clock);
             ret.minute += _minute;
+            if (ret.minute < 60) return baihua::pair<Clock, int>{ret, 0};
             ret.hour += ret.minute / 60;
             ret.minute %= 60;
+            if (ret.hour < 24) return baihua::pair<Clock, int>{ret, 0};
             int day = ret.hour / 24;
             ret.hour %= 24;
             return baihua::pair<Clock, int>{ret, day};
@@ -124,6 +126,13 @@ namespace ticket {
 
         void minus(const int &_day) {
             *this = _minus(*this, _day);
+        }
+
+        friend int operator-(const Date &lhs, const Date &rhs) {
+            int ret = lhs.day - rhs.day;
+            for (int i = rhs.month; i < lhs.month; ++i)
+                ret += months[i];
+            return ret;
         }
 
     };

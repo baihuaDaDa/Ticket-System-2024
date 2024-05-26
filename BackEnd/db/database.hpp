@@ -76,8 +76,17 @@ namespace baihua {
             return block_num;
         }
 
+        int RangeAppend(T *t, int size) {
+            file.open(filename, std::ios::out | std::ios::in | std::ios::binary);
+            file.seekp(0, std::ios::end);
+            int head_index = (int(file.tellp()) - info_len * sizeof(int)) / sizeofT;
+            file.write(reinterpret_cast<char *>(t), sizeofT * size);
+            file.close();
+            return head_index;
+        }
+
         // Update the data at @index with the value of @t. (0-base)
-        void SingleUpdate(T &t, const int index) {
+        void SingleUpdate(T &t, int index) {
             file.open(filename, std::ios::out | std::ios::in | std::ios::binary);
             file.seekp(index * sizeofT + info_len * sizeof(int));
             file.write(reinterpret_cast<char *>(&t), sizeofT);
@@ -85,15 +94,22 @@ namespace baihua {
         }
 
         // Update the data at @index with the @size values after the pointer @t.
-        void BlockUpdate(T *t, const int block_num) {
+        void BlockUpdate(T *t, int block_num) {
             file.open(filename, std::ios::out | std::ios::in | std::ios::binary);
             file.seekp(block_num * block_size * sizeofT + info_len * sizeof(int));
             file.write(reinterpret_cast<char *>(t), block_size * sizeofT);
             file.close();
         }
 
+        void RangeUpdate(T *t, int size, int head_index) {
+            file.open(filename, std::ios::out | std::ios::in | std::ios::binary);
+            file.seekp(head_index * sizeofT + info_len * sizeof(int));
+            file.write(reinterpret_cast<char *>(t), size * sizeofT);
+            file.close();
+        }
+
         // Read the data at @index into @t
-        void SingleRead(T &t, const int index) {
+        void SingleRead(T &t, int index) {
             file.open(filename, std::ios::in | std::ios::binary);
             file.seekg(index * sizeofT + info_len * sizeof(int));
             file.read(reinterpret_cast<char *>(&t), sizeofT);
@@ -101,10 +117,17 @@ namespace baihua {
         }
 
         // Read the data at @index into the space the pointer @t points to, and the size of the data is @size.
-        void BlockRead(T *t, const int block_num) {
+        void BlockRead(T *t, int block_num) {
             file.open(filename, std::ios::in | std::ios::binary);
             file.seekg(block_num * block_size * sizeofT + info_len * sizeof(int));
             file.read(reinterpret_cast<char *>(t), block_size * sizeofT);
+            file.close();
+        }
+
+        void RangeRead(T *t, int size, int head_index) {
+            file.open(filename, std::ios::in | std::ios::binary);
+            file.seekg(head_index * sizeofT + info_len * sizeof(int));
+            file.read(reinterpret_cast<char *>(t), size * sizeofT);
             file.close();
         }
 

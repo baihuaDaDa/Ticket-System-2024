@@ -43,7 +43,7 @@ namespace ticket {
 
     void OrderManager::query_order(std::ostream &os, const ticket::ull &_u) {
         auto orderAddr = orderMap.Find(_u);
-        Order order;
+        static Order order;
         os << orderAddr.size() << '\n';
         for (int i = 0; i < orderAddr.size(); ++i) {
             orderData.SingleRead(order, orderAddr[i].addr);
@@ -59,7 +59,7 @@ namespace ticket {
             os << -1;
             return false;
         }
-        Order order;
+        static Order order;
         orderData.SingleRead(order, orderIndex[_n - 1].addr);
         if (order.status == 0) {
             // TODO 可用线段树优化
@@ -67,9 +67,9 @@ namespace ticket {
             orderData.SingleUpdate(order, orderIndex[_n - 1].addr);
             for (int i = order.staNo.first; i <= order.staNo.second; ++i)
                 seats[i] += order.num;
-            QueueOrderIndex queueOrderIndex{baihua::hash(order.trainID), order.startTime};
+            QueueOrderIndex queueOrderIndex{baihua::hash(order.trainID), order.startDate};
             auto queueOrderAddr = queueOrderMap.Find(queueOrderIndex);
-            Order queueOrder;
+            static Order queueOrder;
             for (auto &elem: queueOrderAddr) {
                 bool success = true;
                 orderData.SingleRead(queueOrder, elem.addr);
@@ -91,7 +91,7 @@ namespace ticket {
         } else if (order.status == 1) {
             order.status = 2;
             orderData.SingleUpdate(order, orderIndex[_n - 1].addr);
-            QueueOrderIndex queueOrderIndex{baihua::hash(order.trainID), order.startTime};
+            QueueOrderIndex queueOrderIndex{baihua::hash(order.trainID), order.startDate};
             auto queueOrderAddr = queueOrderMap.Find(queueOrderIndex);
             for (auto elem: queueOrderAddr)
                 if (elem.timeTag == orderIndex[_n - 1].timeTag) {

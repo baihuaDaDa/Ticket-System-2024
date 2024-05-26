@@ -6,7 +6,7 @@ namespace ticket {
 
     }
 
-    void system::claen() {
+    void system::clean() {
 
     }
 

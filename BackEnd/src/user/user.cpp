@@ -50,7 +50,7 @@ namespace ticket {
             os << -1;
             return;
         }
-        User user;
+        static User user;
         userData.SingleRead(user, userIndex[0].addr);
         if (_p != user.pwd) {
             os << -1;
@@ -80,7 +80,7 @@ namespace ticket {
             os << -1;
             return;
         }
-        User user;
+        static User user;
         userData.SingleRead(user, userIndex[0].addr);
         os << username << ' ' << user.uName << ' ' << user.mail << ' ' << userIndex[0].privilege;
     }
@@ -101,7 +101,7 @@ namespace ticket {
             os << -1;
             return;
         }
-        User user;
+        static User user;
         userData.SingleRead(user, userIndex[0].addr);
         if (_p.first || _n.first || _m.first) {
             if (_p.first) os << (user.pwd = _p.second) << ' ';
