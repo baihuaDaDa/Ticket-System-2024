@@ -108,6 +108,13 @@ namespace baihua {
             return *this;
         }
 
+        char &operator[](size_t index) {
+            if (index >= length) {
+                throw StringIndexingError();
+            }
+            return str[index];
+        }
+
         const char &operator[](size_t index) const {
             if (index >= length) {
                 throw StringIndexingError();

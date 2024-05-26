@@ -2,6 +2,7 @@
 #define TICKET_SYSTEM_TYPEBASE_HPP
 
 #include "../lib/constantLengthString.hpp"
+#include "../lib/array.hpp"
 
 namespace ticket {
 
@@ -17,6 +18,12 @@ namespace ticket {
     typedef baihua::ConstLenStr<staName_Max> staNameType;
 
     constexpr std::string STATUS[3] = {"success", "pending", "refunded"};
+
+    typedef baihua::Array<staNameType, staNum_Max> stationsType;
+    typedef baihua::Array<int, staNum_Max - 1> pricesType;
+    typedef baihua::Array<int, staNum_Max - 1> ttsType;
+    typedef baihua::Array<int, staNum_Max - 2> oType;
+    typedef baihua::Array<int, staNum_Max - 1> seatsType;
 
 }
 

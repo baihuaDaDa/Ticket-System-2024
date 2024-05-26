@@ -26,6 +26,11 @@ namespace baihua {
             return *this;
         }
 
+        friend std::ostream &operator<<(std::ostream &os, const pair &out) {
+            os << out.first << ' ' << out.second;
+            return os;
+        }
+
     };
 
     template<class T1, class T2, int (*CmpT1)(const T1 &, const T1 &), int (*CmpT2)(const T2 &, const T2 &)>

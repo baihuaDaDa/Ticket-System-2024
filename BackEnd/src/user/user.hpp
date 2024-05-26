@@ -8,7 +8,7 @@
 
 namespace ticket {
 
-    struct UserIndex {
+    struct UserAddr {
         int addr;
         int privilege; // privilege也可以放在User里
 
@@ -21,24 +21,24 @@ namespace ticket {
 
     };
 
-    int CmpUserIndex(const UserIndex &lhs, const UserIndex &rhs);
+    int CmpUserIndex(const UserAddr &lhs, const UserAddr &rhs);
 
     int CmpUser(const User &lhs, const User &rhs);
 
     class UserManager {
     private:
-        baihua::BPT<ull, UserIndex, baihua::CmpUll, CmpUserIndex> userMap;
+        baihua::BPT<ull, UserAddr, baihua::CmpUll, CmpUserIndex> userMap;
         baihua::Database<User, 1, 1> userData;
         baihua::map<ull, int> userList; // <username, privilege>
         int userNum;
 
     public:
-        UserManager(const std::string &filename);
+        explicit UserManager(const std::string &filename);
 
         ~UserManager();
 
         void add_user(std::ostream &os, const ull &_c, const ull &_u,
-                      const pwdType &_p, const uNameType &_n, const mailType &_m, const int _g);
+                      const pwdType &_p, const uNameType &_n, const mailType &_m, int _g);
 
         void login(std::ostream &os, const ull &_u, const pwdType &_p);
 

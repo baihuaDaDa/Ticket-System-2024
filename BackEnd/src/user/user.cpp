@@ -9,7 +9,7 @@ namespace ticket {
         else return baihua::CmpStr(lhs.mail, rhs.mail);
     }
 
-    int CmpUserIndex(const UserIndex &lhs, const UserIndex &rhs) {
+    int CmpUserIndex(const UserAddr &lhs, const UserAddr &rhs) {
         if (lhs.addr != rhs.addr) return baihua::CmpInt(lhs.addr, rhs.addr);
         else return baihua::CmpInt(lhs.privilege, rhs.privilege);
     }
@@ -26,7 +26,7 @@ namespace ticket {
     }
 
     void UserManager::add_user(std::ostream &os, const ull &_c, const ull &_u,
-                  const pwdType &_p, const uNameType &_n, const mailType &_m, const int _g) {
+                  const pwdType &_p, const uNameType &_n, const mailType &_m, int _g) {
         if (userNum != 0) {
             auto iter = userList.find(_c);
             if (iter == userList.end() || iter->second <= _g || !userMap.Find(_u).empty()) {
@@ -35,7 +35,7 @@ namespace ticket {
             }
         }
         User newUser(_p, _n, _m);
-        UserIndex newUserIndex(userData.SingleAppend(newUser), (userNum == 0 ? 10 : _g));
+        UserAddr newUserIndex(userData.SingleAppend(newUser), (userNum == 0 ? 10 : _g));
         userMap.Insert(_u, newUserIndex);
         ++userNum;
     }

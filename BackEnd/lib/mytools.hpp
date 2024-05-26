@@ -32,6 +32,15 @@ namespace baihua {
         return hashCode;
     }
 
+    ull hash(const std::string &str) {
+        const ull M = 1e9 + 7;
+        const ull b = 197;
+        ull hashCode = 0;
+        for (size_t i = 0; i < str.size(); ++i)
+            hashCode = (hashCode * b + str[i]) % M;
+        return hashCode;
+    }
+
     // @return -1, 0, 1
     int CmpUll(const ull &lhs, const ull &rhs) {
         if (lhs == rhs) return 0;
