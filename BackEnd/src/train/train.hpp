@@ -3,7 +3,6 @@
 
 #include "../db/bpt.hpp"
 #include "../typebase.hpp"
-#include "../time.hpp"
 #include "../lib/STLite/utility.hpp"
 
 namespace ticket {
@@ -39,23 +38,35 @@ namespace ticket {
     };
 
     struct Station {
-        ull trainID;
+        ull hashTrainID;
+        trainIDType trainID;
         int staNo;
         Clock arriveClock;
         int stopoverTime;
-        int price; // from this station to the next
+        int price; // from the start to this station
         int time; // from the start station to this one
 
     };
 
     struct Ticket {
+        trainIDType trainID;
+        ftType from;
+        ftType to;
+        int price;
+        int seatNum;
+
+        friend std::ostream &operator<<(std::ostream &os, const Ticket &ticket);
+
+    };
+
+    struct TicketOrder {
         baihua::pair<bool, bool> success_and_queue;
         Date startDate;
         Time from;
         Time to;
         baihua::pair<int, int> staNo;
 
-        Ticket(const Date &date) : success_and_queue(false, false), startDate(date), from(), to(), staNo() {}
+        TicketOrder(const Date &date) : success_and_queue(false, false), startDate(date), from(), to(), staNo() {}
 
     };
 
@@ -80,16 +91,17 @@ namespace ticket {
 
         void delete_train(std::ostream &os, const ull &_i);
 
-        void release_train(std::ostream &os, const ull &_i);
+        void release_train(std::ostream &os, const ull &_i, const trainIDType &trainID);
 
         void query_train(std::ostream &os, const ull &_i, const Date &_d, const trainIDType &trainID);
 
-        void query_ticket(std::ostream &os, const ull &_s, const ull &_t, const Date &_d, bool _p);
+        void query_ticket(std::ostream &os, const ull &_s, const staNameType &start, const ull &_t,
+                          const staNameType &to, const Date &_d, bool _p);
 
         void query_transfer(std::ostream &os, const ull &_s, const ull &_t, const Date &_d, bool _p);
 
-        Ticket buy_ticket_if_success(std::ostream &os, const ull &_i, const Date &_d,
-                                     int _n, const ull &_f, const ull &_t, bool _q);
+        TicketOrder buy_ticket_if_success(std::ostream &os, const ull &_i, const Date &_d,
+                                          int _n, const ull &_f, const ull &_t, bool _q);
 
         void write_seats(int addr, seatsType &seats);
 

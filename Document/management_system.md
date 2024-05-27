@@ -48,7 +48,7 @@
 
 #### 车次数据涉及以下属性：
 
-- `trainID`：车次的**唯一**标识符，由字母开头，字母、数字和下划线组成的字符串，长度不超过 20。
+- `hashTrainID`：车次的**唯一**标识符，由字母开头，字母、数字和下划线组成的字符串，长度不超过 20。
   
 - `stationNum`：车次经过的车站数量，一个不低于 2 且不超过 100 的整数。
   
@@ -191,11 +191,11 @@
   
   - 说明
   
-     添加 `<trainID>` 为 `-i`，`<stationNum>` 为 `-n`，`<seatNum>` 为 `-m`，`<stations>` 为 `-s`，`<prices>` 为 `-p`，`<startClock>` 为 `-x`，`<travelTimes>` 为 `-t`，`<stopoverTimes>` 为 `-o`，`<saleDate>` 为 `-d`，`<type>` 为 `-y` 的车次。
+     添加 `<hashTrainID>` 为 `-i`，`<stationNum>` 为 `-n`，`<seatNum>` 为 `-m`，`<stations>` 为 `-s`，`<prices>` 为 `-p`，`<startClock>` 为 `-x`，`<travelTimes>` 为 `-t`，`<stopoverTimes>` 为 `-o`，`<saleDate>` 为 `-d`，`<type>` 为 `-y` 的车次。
     由于 `-s`、`-p`、`-t`、`-o` 和 `-d` 由多个值组成，输入时两个值之间以 `|` 隔开（仍是一个不含空格的字符串）。
     
     输入保证火车的座位数大于 0,站的数量不少于 2 不多于 100，且如果火车只有两站 `-o` 后的参数用下划线代替（见举例2）,且火车不会经过同一个站两次。
-    如果 `<trainID>` 已经存在则添加失败。
+    如果 `<hashTrainID>` 已经存在则添加失败。
     
   - 返回值
   
@@ -222,7 +222,7 @@
 
   - 说明
 
-    删除 `<trainID>` 为 `-i` 的车次，删除车次必须保证未发布。
+    删除 `<hashTrainID>` 为 `-i` 的车次，删除车次必须保证未发布。
 
   - 返回值
 
@@ -238,7 +238,7 @@
 
   - 说明
 
-    将车次 `-i` (`<trainID>`) 发布。
+    将车次 `-i` (`<hashTrainID>`) 发布。
     发布前的车次，不可发售车票，无法被 `query_ticket` 和 `query_transfer` 操作所查询到；发布后的车次不可被删除。
 
   - 返回值
@@ -261,13 +261,13 @@
 
   - 说明
 
-    查询在日期 `-d` 发车的，车次 `-i` (`<trainID>`) 的情况，`-d` 的格式为 `mm-dd`。
+    查询在日期 `-d` 发车的，车次 `-i` (`<hashTrainID>`) 的情况，`-d` 的格式为 `mm-dd`。
 
   - 返回值
 
     查询成功：输出共 `(<stationNum> + 1)` 行。
 
-    第一行为 `<trainID> <type>`。
+    第一行为 `<hashTrainID> <type>`。
 
     接下来 `<stationNum>` 行，第 `i` 行为 `<stations[i]> <ARRIVING_TIME> -> <LEAVING_TIME> <PRICE> <SEAT>`，其中 `<ARRIVING_TIME>` 和 `<LEAVING_TIME>` 为列车到达本站和离开本站的绝对时间，格式为 `mm-dd hr:mi`。`<PRICE>` 为从始发站乘坐至该站的累计票价，`<SEAT>` 为从该站到下一站的剩余票数。对于始发站的到达时间和终点站的出发时间，所有数字均用 `x` 代替；终点站的剩余票数用 `x` 代替。如果车辆还未 `release` 则认为所有票都没有被卖出去。
     
@@ -297,13 +297,13 @@
 
     查询日期为 `-d` 时从 `-s` 出发，并到达 `-t` 的车票。请注意：这里的日期是列车从 `-s` 出发的日期，不是从列车始发站出发的日期。
     
-    `-p`的值为 `time` 和 `cost` 中的一个，若为 `time` 表示输出按照该车次所需时间从小到大排序，否则按照票价从低到高排序。如果按照时间排序车次所需时间相同，则把 `<trainID>` 作为第二关键字进行排序，按照票价排序；同理若出现车次票价相同，则同样把 `<trainID>` 作为第二关键字进行排序。
+    `-p`的值为 `time` 和 `cost` 中的一个，若为 `time` 表示输出按照该车次所需时间从小到大排序，否则按照票价从低到高排序。如果按照时间排序车次所需时间相同，则把 `<hashTrainID>` 作为第二关键字进行排序，按照票价排序；同理若出现车次票价相同，则同样把 `<hashTrainID>` 作为第二关键字进行排序。
 
   - 返回值
   
     第一行输出一个整数，表示符合要求的车次数量。
 
-    接下来每一行输出一个符合要求的车次，按要求排序。格式为 `<trainID> <FROM> <LEAVING_TIME> -> <TO> <ARRIVING_TIME> <PRICE> <SEAT>`，其中出发时间、到达时间格式同 `query_train`，`<FROM>` 和 `<TO>` 为出发站和到达站，`<PRICE>` 为累计价格，`<SEAT>` 为最多能购买的票数。
+    接下来每一行输出一个符合要求的车次，按要求排序。格式为 `<hashTrainID> <FROM> <LEAVING_TIME> -> <TO> <ARRIVING_TIME> <PRICE> <SEAT>`，其中出发时间、到达时间格式同 `query_train`，`<FROM>` 和 `<TO>` 为出发站和到达站，`<PRICE>` 为累计价格，`<SEAT>` 为最多能购买的票数。
   
 - 样例
   
@@ -342,7 +342,7 @@
     
   - 说明
     
-    用户 `-u` (`<username>`) 购买：车次 `-i` (`<trainID>`)，日期为 `-d`，从站 `-f` 到站 `-t` 的车票 `-n` 张。
+    用户 `-u` (`<username>`) 购买：车次 `-i` (`<hashTrainID>`)，日期为 `-d`，从站 `-f` 到站 `-t` 的车票 `-n` 张。
     
     `-q`可选 `false` 或 `true`，若为 `true`，表明在**余票不足**的情况下愿意接受候补购票，当有余票时**立即**视为此用户购买了车票，且保证购买的车票的数量大于 0。请注意：这里的日期是列车从 `-f` 出发的日期，不是从列车始发站出发的日期。
     
@@ -404,7 +404,7 @@
 
     查询成功：第一行输出一个整数，表示订单数量。
 
-    接下来每一行表示一个订单，格式为 `[<STATUS>] <trainID> <FROM> <LEAVING_TIME> -> <TO> <ARRIVING_TIME> <PRICE> <NUM>`，其中 `<NUM>` 为购票数量， `<STATUS>` 表示该订单的状态，可能的值为：`success`（购票已成功）、`pending`（位于候补购票队列中）和 `refunded`（已经退票）。
+    接下来每一行表示一个订单，格式为 `[<STATUS>] <hashTrainID> <FROM> <LEAVING_TIME> -> <TO> <ARRIVING_TIME> <PRICE> <NUM>`，其中 `<NUM>` 为购票数量， `<STATUS>` 表示该订单的状态，可能的值为：`success`（购票已成功）、`pending`（位于候补购票队列中）和 `refunded`（已经退票）。
     
     查询失败：`-1`
     

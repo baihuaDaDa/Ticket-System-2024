@@ -52,13 +52,13 @@ namespace ticket {
             return baihua::pair<Clock, int>{ret, day};
         }
 
-        int add(const int &_minute) {
+        int add(int _minute) {
             auto result = _add(*this, _minute);
             *this = result.first;
             return result.second;
         }
 
-        friend baihua::pair<Clock, int> _minus(const Clock &clock, const int &_minute) {
+        friend baihua::pair<Clock, int> _minus(const Clock &clock, int _minute) {
             Clock ret(clock);
             ret.minute -= _minute;
             if (ret.minute >= 0) return baihua::pair<Clock, int>{ret, 0};
@@ -71,7 +71,7 @@ namespace ticket {
             return baihua::pair<Clock, int>{ret, dd};
         }
 
-        int minus(const int &_minute) {
+        int minus(int _minute) {
             auto result = _minus(*this, _minute);
             *this = result.first;
             return result.second;
@@ -106,25 +106,25 @@ namespace ticket {
             return os;
         }
 
-        friend Date _add(const Date &date, const int &_day) {
+        friend Date _add(const Date &date, int _day) {
             Date ret(date);
             ret.day += _day;
             for (; ret.day <= months[ret.month]; ret.day -= months[ret.month++]);
             return ret;
         }
 
-        void add(const int &_day) {
+        void add(int _day) {
             *this = _add(*this, _day);
         }
 
-        friend Date _minus(const Date &date, const int &_day) {
+        friend Date _minus(const Date &date, int _day) {
             Date ret(date);
             ret.day -= _day;
             for (; ret.day >= 1; ret.day += months[--ret.month]);
             return ret;
         }
 
-        void minus(const int &_day) {
+        void minus(int _day) {
             *this = _minus(*this, _day);
         }
 
@@ -149,23 +149,23 @@ namespace ticket {
 
         Time(const std::string &time) : clock(time.substr(0, 5)), date(time.substr(6, 5)) {}
 
-        Time &operator+=(const int &minute) {
+        Time &operator+=(int minute) {
             date.add(clock.add(minute));
             return *this;
         }
 
-        friend Time operator+(const Time &x, const int &minute) {
+        friend Time operator+(const Time &x, int minute) {
             Time ret(x);
             ret += minute;
             return ret;
         }
 
-        Time &operator-=(const int &minute) {
+        Time &operator-=(int minute) {
             date.minus(clock.minus(minute));
             return *this;
         }
 
-        friend Time operator-(const Time &x, const int &minute) {
+        friend Time operator-(const Time &x, int minute) {
             Time ret(x);
             ret -= minute;
             return ret;

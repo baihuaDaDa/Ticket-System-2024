@@ -3,7 +3,6 @@
 
 #include "../db/bpt.hpp"
 #include "../typebase.hpp"
-#include "../time.hpp"
 #include "../lib/STLite/utility.hpp"
 #include "../lib/mytools.hpp"
 
@@ -19,8 +18,8 @@ namespace ticket {
         int status;
         trainIDType trainID;
         Date startDate;
-        baihua::pair<staNameType, Time> from;
-        baihua::pair<staNameType, Time> to;
+        ftType from;
+        ftType to;
         baihua::pair<int, int> staNo;
         int price;
         int num;
@@ -57,9 +56,7 @@ namespace ticket {
         explicit OrderManager(const std::string &filename);
 
         void buy_ticket(bool queue, const ull &_u, const trainIDType &_i, const Date &startDate, int _n,
-                        int prices, const baihua::pair<staNameType, Time> &_f,
-                        const baihua::pair<staNameType, Time> &_t, baihua::pair<int, int> staNo,
-                        int timeTag);
+                        int prices, const ftType &_f, const ftType &_t, baihua::pair<int, int> staNo, int timeTag);
 
         void query_order(std::ostream &os, const ull &_u);
 

@@ -129,9 +129,7 @@ namespace baihua {
 
     template<size_t length>
     std::ostream &operator<<(std::ostream &out, const ConstLenStr<length> &str1) {
-        for (size_t i = 0; i < str1.size; i++) {
-            out << str1.str[i];
-        }
+        out << str1.str;
         return out;
     }
 

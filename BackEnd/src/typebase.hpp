@@ -1,6 +1,7 @@
 #ifndef TICKET_SYSTEM_TYPEBASE_HPP
 #define TICKET_SYSTEM_TYPEBASE_HPP
 
+#include "time.hpp"
 #include "../lib/constantLengthString.hpp"
 #include "../lib/array.hpp"
 
@@ -26,6 +27,7 @@ namespace ticket {
     typedef baihua::Array<int, staNum_Max> ttsType;
     typedef baihua::Array<int, staNum_Max> oType;
     typedef baihua::Array<int, staNum_Max - 1> seatsType;
+    typedef baihua::pair<staNameType, Time> ftType;
 
 }
 

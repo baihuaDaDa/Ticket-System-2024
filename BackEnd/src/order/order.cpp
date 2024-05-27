@@ -2,6 +2,8 @@
 
 namespace ticket {
 
+    // TODO timeTag在重启系统之后会重置吗？如果会，就不能用timeTag来表示订单先后顺序
+
     // 按orderNo降序
     int CmpOrderIndex(const OrderAddr &lhs, const OrderAddr &rhs) {
         if (lhs.timeTag != rhs.timeTag) return -baihua::CmpInt(lhs.timeTag, rhs.timeTag);
@@ -32,8 +34,7 @@ namespace ticket {
     }
 
     void OrderManager::buy_ticket(bool queue, const ull &_u, const trainIDType &_i, const Date &startDate, int _n,
-                                  int price, const baihua::pair<staNameType, Time> &_f,
-                                  const baihua::pair<staNameType, Time> &_t, baihua::pair<int, int> staNo,
+                                  int price, const ftType &_f, const ftType &_t, baihua::pair<int, int> staNo,
                                   int timeTag) {
         Order newOrder{queue, _i, startDate, _f, _t, staNo, price, _n};
         int addr = orderData.SingleAppend(newOrder);
