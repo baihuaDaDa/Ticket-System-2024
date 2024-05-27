@@ -584,6 +584,10 @@ namespace baihua {
             if (_size == 0) throw container_is_empty();
             erase(_end - 1);
         }
+
+        T *data() const {
+            return _begin.GetPointer();
+        }
     };
 }
 

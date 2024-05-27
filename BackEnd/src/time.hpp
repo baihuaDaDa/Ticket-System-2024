@@ -77,6 +77,10 @@ namespace ticket {
             return result.second;
         }
 
+        friend int operator-(const Clock &x, const Clock &y) {
+            return x.minute - y.minute + 60 * (x.hour - y.hour);
+        }
+
     };
 
     struct Date {
@@ -169,6 +173,10 @@ namespace ticket {
             Time ret(x);
             ret -= minute;
             return ret;
+        }
+
+        friend int operator-(const Time &x, const Time &y) {
+            return (x.date - y.date) * 24 * 60 + (x.clock - y.clock);
         }
 
         friend std::ostream &operator<<(std::ostream &os, const Time &time) {

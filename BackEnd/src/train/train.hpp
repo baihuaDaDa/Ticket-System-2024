@@ -4,6 +4,7 @@
 #include "../db/bpt.hpp"
 #include "../typebase.hpp"
 #include "../lib/STLite/utility.hpp"
+#include "../lib/STLite/algorithm.hpp"
 
 namespace ticket {
 
@@ -16,7 +17,7 @@ namespace ticket {
     struct Train {
         int staNum;
         stationsType stations;
-        hashStaType hashStations;
+        hashStaType hashStations; // TODO maybe unnecessary
         int seatNum;
         pricesType prices; // from the start station
         Clock startClock;
@@ -33,7 +34,7 @@ namespace ticket {
     struct DailyTrainAddr {
         int trainAddr;
         int seatAddr;
-        baihua::pair<Date, Date> saleDate;
+        baihua::pair<Date, Date> saleDate; //
 
     };
 
@@ -41,6 +42,7 @@ namespace ticket {
         ull hashTrainID;
         trainIDType trainID;
         int staNo;
+        baihua::pair<Date, Date> saleDate;
         Clock arriveClock;
         int stopoverTime;
         int price; // from the start to this station
@@ -54,8 +56,18 @@ namespace ticket {
         ftType to;
         int price;
         int seatNum;
+        int time;
 
         friend std::ostream &operator<<(std::ostream &os, const Ticket &ticket);
+
+    };
+
+    struct Transfer {
+        Ticket first;
+        Ticket second;
+        int time;
+
+        friend std::ostream &operator<<(std::ostream &os, const Transfer &transfer);
 
     };
 
@@ -75,6 +87,14 @@ namespace ticket {
     int CmpDailyTrainAddr(const DailyTrainAddr &lhs, const DailyTrainAddr &rhs);
 
     int CmpStation(const Station &lhs, const Station &rhs);
+
+    int CmpTicketTime(const Ticket &lhs, const Ticket &rhs);
+
+    int CmpTicketCost(const Ticket &lhs, const Ticket &rhs);
+
+    int CmpTransferTime(const Transfer &lhs, const Transfer &rhs);
+
+    int CmpTransferCost(const Transfer &lhs, const Transfer &rhs);
 
     class TrainManager {
     private:
@@ -98,7 +118,8 @@ namespace ticket {
         void query_ticket(std::ostream &os, const ull &_s, const staNameType &start, const ull &_t,
                           const staNameType &to, const Date &_d, bool _p);
 
-        void query_transfer(std::ostream &os, const ull &_s, const ull &_t, const Date &_d, bool _p);
+        void query_transfer(std::ostream &os, const ull &_s, const staNameType &start, const ull &_t,
+                            const staNameType &to, const Date &_d, bool _p);
 
         TicketOrder buy_ticket_if_success(std::ostream &os, const ull &_i, const Date &_d,
                                           int _n, const ull &_f, const ull &_t, bool _q);
