@@ -17,13 +17,16 @@ namespace ticket {
     struct Train {
         int staNum;
         stationsType stations;
+        hashStaType hashStations;
         int seatNum;
-        pricesType prices;
-        Clock startTime;
-        ttsType travelTimes;
+        pricesType prices; // from the start station
+        Clock startClock;
+        ttsType travelTimes; // from the start station
         oType stopoverTimes;
         baihua::pair<Date, Date> saleDate;
         char type;
+
+        void print_train(std::ostream &os, int ind, const Date &startDate);
 
     };
 
@@ -37,10 +40,22 @@ namespace ticket {
 
     struct Station {
         ull trainID;
+        int staNo;
         Clock arriveClock;
         int stopoverTime;
         int price; // from this station to the next
         int time; // from the start station to this one
+
+    };
+
+    struct Ticket {
+        baihua::pair<bool, bool> success_and_queue;
+        Date startDate;
+        Time from;
+        Time to;
+        baihua::pair<int, int> staNo;
+
+        Ticket(const Date &date) : success_and_queue(false, false), startDate(date), from(), to(), staNo() {}
 
     };
 
@@ -67,14 +82,14 @@ namespace ticket {
 
         void release_train(std::ostream &os, const ull &_i);
 
-        void query_train(std::ostream &os, const ull &_i, const Date &_d);
+        void query_train(std::ostream &os, const ull &_i, const Date &_d, const trainIDType &trainID);
 
-        void query_ticket(const ull &_s, const ull &_t, const Date &_d, bool _p);
+        void query_ticket(std::ostream &os, const ull &_s, const ull &_t, const Date &_d, bool _p);
 
-        void query_transfer(const ull &_s, const ull &_t, const Date &_d, bool _p);
+        void query_transfer(std::ostream &os, const ull &_s, const ull &_t, const Date &_d, bool _p);
 
-        bool buy_ticket_if_success(const ull &_i, const Date &_d, int _n, const staNameType &_f,
-                                   const staNameType &_t, bool _q);
+        Ticket buy_ticket_if_success(std::ostream &os, const ull &_i, const Date &_d,
+                                     int _n, const ull &_f, const ull &_t, bool _q);
 
         void write_seats(int addr, seatsType &seats);
 

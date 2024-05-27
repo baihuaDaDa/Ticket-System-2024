@@ -12,8 +12,8 @@ namespace baihua {
     public:
         Array() = default;
 
-        Array(const Array &other) : _size(other._size) {
-            for (size_t i = 0; i < _size; ++i)
+        Array(const Array &other) {
+            for (size_t i = 0; i < length; ++i)
                 _data[i] = other._data[i];
         }
 
@@ -24,7 +24,6 @@ namespace baihua {
                 std::stringstream ss(str);
                 int ind = 0;
                 while (std::getline(ss, _data[ind++], ch));
-                _size = ind;
             }
         }
 
@@ -51,12 +50,11 @@ namespace baihua {
         }
 
         size_t size() const {
-            return _size;
+            return length;
         }
 
     private:
         T _data[length];
-        size_t _size;
     };
 
 }

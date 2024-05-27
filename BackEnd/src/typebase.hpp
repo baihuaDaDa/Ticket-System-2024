@@ -21,9 +21,10 @@ namespace ticket {
     constexpr std::string STATUS[3] = {"success", "pending", "refunded"};
 
     typedef baihua::Array<staNameType, staNum_Max> stationsType;
-    typedef baihua::Array<int, staNum_Max - 1> pricesType;
-    typedef baihua::Array<int, staNum_Max - 1> ttsType;
-    typedef baihua::Array<int, staNum_Max - 2> oType;
+    typedef baihua::Array<ull, staNum_Max> hashStaType;
+    typedef baihua::Array<int, staNum_Max> pricesType;
+    typedef baihua::Array<int, staNum_Max> ttsType;
+    typedef baihua::Array<int, staNum_Max> oType;
     typedef baihua::Array<int, staNum_Max - 1> seatsType;
 
 }
