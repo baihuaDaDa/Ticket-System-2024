@@ -7,7 +7,7 @@ namespace baihua {
 
     template<class T>
     void sort(T *beg, T *end, int (*cmp)(const T &, const T &)) {
-        if (beg + 1 == end) return;
+        if (beg + 1 == end || beg == end) return;
         int l = 0, r = end - beg - 1, mid = (l + r) / 2;
         T pivot = beg[mid];
         while (l < r) {

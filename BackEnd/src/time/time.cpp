@@ -97,7 +97,7 @@ namespace ticket {
     Date _add(const Date &date, int _day) {
         Date ret(date);
         ret.day += _day;
-        for (; ret.day <= Date::months[ret.month]; ret.day -= Date::months[ret.month++]);
+        for (; ret.day > Date::months[ret.month]; ret.day -= Date::months[ret.month++]);
         return ret;
     }
 
@@ -108,7 +108,7 @@ namespace ticket {
     Date _minus(const Date &date, int _day) {
         Date ret(date);
         ret.day -= _day;
-        for (; ret.day >= 1; ret.day += Date::months[--ret.month]);
+        for (; ret.day < 1; ret.day += Date::months[--ret.month]);
         return ret;
     }
 

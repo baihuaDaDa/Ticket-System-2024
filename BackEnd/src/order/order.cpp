@@ -22,7 +22,7 @@ namespace ticket {
     }
 
     std::ostream &operator<<(std::ostream &os, const Order &order) {
-        os << '[' << STATUS[order.status] << ']' << ' ' << order.trainID << ' ' << order.from << ' ' << "->" << order.to
+        os << '[' << STATUS[order.status] << ']' << ' ' << order.trainID << ' ' << order.from << " -> " << order.to
            << ' ' << order.price << ' ' << order.num;
         return os;
     }
@@ -45,7 +45,8 @@ namespace ticket {
     void OrderManager::query_order(std::ostream &os, const ticket::ull &_u) {
         auto orderAddr = orderMap.Find(_u);
         static Order order;
-        os << orderAddr.size() << '\n';
+        os << orderAddr.size();
+        if (!orderAddr.empty()) os << '\n';
         for (int i = 0; i < orderAddr.size(); ++i) {
             orderData.SingleRead(order, orderAddr[i].addr);
             os << order;
@@ -87,7 +88,7 @@ namespace ticket {
     }
 
     void OrderManager::push_queue(seatsType &seats, const Order &order) {
-        for (int i = order.staNo.first; i <= order.staNo.second; ++i)
+        for (int i = order.staNo.first; i < order.staNo.second; ++i)
             seats[i] += order.num;
         QueueOrderIndex queueOrderIndex{baihua::hash(order.trainID), order.startDate};
         auto queueOrderAddr = queueOrderMap.Find(queueOrderIndex);
@@ -95,13 +96,13 @@ namespace ticket {
         for (auto &elem: queueOrderAddr) {
             bool success = true;
             orderData.SingleRead(queueOrder, elem.addr);
-            for (int i = queueOrder.staNo.first; i <= queueOrder.staNo.second; ++i)
+            for (int i = queueOrder.staNo.first; i < queueOrder.staNo.second; ++i)
                 if (seats[i] < queueOrder.num) {
                     success = false;
                     break;
                 }
             if (success) {
-                for (int i = queueOrder.staNo.first; i <= queueOrder.staNo.second; ++i)
+                for (int i = queueOrder.staNo.first; i < queueOrder.staNo.second; ++i)
                     seats[i] -= queueOrder.num;
                 queueOrder.status = 0;
                 orderData.SingleUpdate(queueOrder, elem.addr);

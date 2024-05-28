@@ -86,6 +86,11 @@ namespace ticket {
     }
 
     void System::buy_ticket(std::ostream &os, const ArgSet &argSet) {
+        ull _u = baihua::hash(argSet.args['u' - 'a']);
+        if (!userManager.if_login(_u)) {
+            os << -1;
+            return;
+        }
         Date _d{argSet.args['d' - 'a']};
         int _n = baihua::default_string_to_int(argSet.args['n' - 'a']);
         bool _q = false;
@@ -95,19 +100,29 @@ namespace ticket {
                                                                              baihua::hash(argSet.args['f' - 'a']),
                                                                              baihua::hash(argSet.args['t' - 'a']), _q);
         if (ticketOrder.success_and_queue.first)
-            orderManager.buy_ticket(ticketOrder.success_and_queue.second, baihua::hash(argSet.args['u' - 'a']),
+            orderManager.buy_ticket(ticketOrder.success_and_queue.second, _u,
                                     argSet.args['i' - 'a'], ticketOrder.startDate, _n, ticketOrder.price,
                                     {argSet.args['f' - 'a'], ticketOrder.from},
                                     {argSet.args['t' - 'a'], ticketOrder.to}, ticketOrder.staNo, argSet.timeTag);
     }
 
     void System::query_order(std::ostream &os, const ArgSet &argSet) {
-        orderManager.query_order(os, baihua::hash(argSet.args['u' - 'a']));
+        ull _u = baihua::hash(argSet.args['u' - 'a']);
+        if (!userManager.if_login(_u)) {
+            os << -1;
+            return;
+        }
+        orderManager.query_order(os, _u);
     }
 
     void System::refund_ticket(std::ostream &os, const ArgSet &argSet) {
+        ull _u = baihua::hash(argSet.args['u' - 'a']);
+        if (!userManager.if_login(_u)) {
+            os << -1;
+            return;
+        }
         int _n = (argSet.argsList['n' - 'a'] ? baihua::default_string_to_int(argSet.args['n' - 'a']) : 1);
-        auto result = orderManager.refund_ticket(os, baihua::hash(argSet.args['u' - 'a']), _n);
+        auto result = orderManager.refund_ticket(os, _u, _n);
         if (result.first) {
             static seatsType seats;
             int addr = trainManager.read_seats(seats, baihua::hash(result.second.trainID), result.second.startDate);
@@ -123,6 +138,9 @@ namespace ticket {
 
     void System::clean(std::ostream &os, const ArgSet &argSet) {
         os << 0;
+        userManager.clear();
+        trainManager.clear();
+        orderManager.clear();
     }
 
     bool System::if_run() const {

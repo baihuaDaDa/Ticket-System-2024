@@ -55,7 +55,8 @@ namespace ticket {
 
     std::ostream &operator<<(std::ostream &os, const Ticket &ticket) {
         os << ticket.trainID << ' ' << ticket.from.first << ' ' << ticket.from.second << " -> " << ticket.to.first
-           << ticket.to.second << ticket.price << ' ' << ticket.seatNum;
+           << ' ' << ticket.to.second << ' ' << ticket.price << ' ' << ticket.seatNum;
+        return os;
     }
 
     std::ostream &operator<<(std::ostream &os, const Transfer &transfer) {
@@ -80,13 +81,18 @@ namespace ticket {
         static hashStaType __s;
         static ttsType __t;
         static pricesType __p;
+        static oType __o;
+        __o[0] = __o[_n - 1] = 0;
+        for (int i = 1; i < _n - 1; ++i)
+            __o[i] = _o[i - 1];
         __t[0] = __p[0] = 0;
+        __s[0] = baihua::hash(_s[0]);
         for (int i = 1; i < _n; ++i) {
-            __t[i] = __t[i - 1] + _t[i - 1] + _o[i - 1];
+            __t[i] = __t[i - 1] + _t[i - 1] + __o[i - 1];
             __p[i] = __p[i - 1] + _p[i - 1];
             __s[i] = baihua::hash(_s[i]);
         }
-        Train newTrain{_n, _s, __s, _m, __p, _x, __t, _o, _d, _y};
+        Train newTrain{_n, _s, __s, _m, __p, _x, __t, __o, _d, _y};
         trainMap.Insert(_i, TrainAddr{trainData.SingleAppend(newTrain), false});
         os << 0;
     }
@@ -107,6 +113,9 @@ namespace ticket {
             os << -1;
             return;
         }
+        trainMap.Delete(_i, trainAddr[0]);
+        trainAddr[0].released = true;
+        trainMap.Insert(_i, trainAddr[0]);
         static Train train;
         trainData.SingleRead(train, trainAddr[0].addr);
         static seatsType dailyTrains[trainNum_Max];
@@ -136,12 +145,17 @@ namespace ticket {
         }
         static Train train;
         trainData.SingleRead(train, trainAddr[0].addr);
+        if (CmpDate(_d, train.saleDate.first) == -1 || CmpDate(_d, train.saleDate.second) == 1) {
+            os << -1;
+            return;
+        }
         os << trainID << ' ' << train.type << '\n';
         if (!trainAddr[0].released) {
             for (int i = 0; i < train.staNum; ++i) {
                 train.print_train(os, i, _d);
-                os << ' ' << (i != train.staNum - 1 ? train.seatNum : 'x');
-                if (i != train.staNum - 1) os << '\n';
+                os << ' ';
+                if (i != train.staNum - 1) os << train.seatNum << '\n';
+                else os << 'x';
             }
         } else {
             auto dailyTrainAddr = dailyTrainMap.Find(_i);
@@ -149,8 +163,9 @@ namespace ticket {
             dailyTrainData.SingleRead(dailyTrain, dailyTrainAddr[0].seatAddr + (_d - dailyTrainAddr[0].saleDate.first));
             for (int i = 0; i < train.staNum; ++i) {
                 train.print_train(os, i, _d);
-                os << ' ' << (i != train.staNum - 1 ? dailyTrain[i] : 'x');
-                if (i != train.staNum - 1) os << '\n';
+                os << ' ';
+                if (i != train.staNum - 1) os << dailyTrain[i] << '\n';
+                else os << 'x';
             }
         }
     }
@@ -190,7 +205,8 @@ namespace ticket {
                 ++tp;
             }
         }
-        os << tickets.size() << '\n';
+        os << tickets.size();
+        if (!tickets.empty()) os << '\n';
         if (_p) baihua::sort(tickets.data(), tickets.data() + tickets.size(), CmpTicketTime);
         else baihua::sort(tickets.data(), tickets.data() + tickets.size(), CmpTicketCost);
         for (int i = 0; i < tickets.size(); ++i) {
@@ -288,13 +304,16 @@ namespace ticket {
         for (int i = 0; i < train.staNum; ++i) {
             if (start == -1) {
                 if (train.hashStations[i] == _f) start = i;
-            } else if (end == -1 && train.hashStations[i] == _t) end = i;
+            } else if (train.hashStations[i] == _t) {
+                end = i;
+                break;
+            }
         }
         if (start == -1 || end == -1) {
             os << -1;
             return ret;
         }
-        ret.startDate.minus(_add(train.startClock, train.travelTimes[start]).second);
+        ret.startDate.minus(_add(train.startClock, train.travelTimes[start] + train.stopoverTimes[start]).second);
         if (CmpDate(ret.startDate, dailyTrainAddr[0].saleDate.first) == -1 ||
             CmpDate(ret.startDate, dailyTrainAddr[0].saleDate.second) == 1) {
             os << -1;
@@ -303,7 +322,7 @@ namespace ticket {
         ret.staNo = {start, end};
         ret.success_and_queue.first = true;
         Time startTime{ret.startDate, train.startClock};
-        ret.from = startTime + train.travelTimes[start];
+        ret.from = startTime + train.travelTimes[start] + train.stopoverTimes[start];
         ret.to = startTime + train.travelTimes[end];
         ret.price = train.prices[end] - train.prices[start];
         static seatsType dailyTrain;

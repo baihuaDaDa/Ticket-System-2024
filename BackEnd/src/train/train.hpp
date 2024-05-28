@@ -79,7 +79,7 @@ namespace ticket {
         baihua::pair<int, int> staNo;
         int price; // total
 
-        TicketOrder(const Date &date) : success_and_queue(false, false), startDate(date), from(), to(), staNo() {}
+        TicketOrder(const Date &date) : success_and_queue(false, false), startDate(date), from(), to(), staNo(), price() {}
 
     };
 
