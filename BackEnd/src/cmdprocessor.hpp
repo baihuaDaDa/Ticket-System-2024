@@ -16,10 +16,16 @@ namespace ticket {
     struct ArgSet {
         int cmdNo, argNum, timeTag;
         std::string args[argNum_Max];
+        bool argsList[argNum_Max];
         ArgSet() : cmdNo(-1), argNum(0), timeTag(0), args() {}
+        void initialize() {
+            for (int i = 0; i < argNum_Max; ++i)
+                argsList[i] = false;
+        }
     };
 
     void parse(const std::string &cmd, ArgSet &argSet) {
+        argSet.initialize();
         int len = cmd.size();
         while (cmd[len - 1] == ' ' || cmd[len - 1] == '\t' || cmd[len - 1] == '\n' || cmd[len - 1] == '\r') --len;
         std::stringstream ss(cmd);
@@ -35,6 +41,7 @@ namespace ticket {
             argNo = token[1] - 'a';
             std::getline(ss, token, ' ');
             argSet.args[argNo] = token;
+            argSet.argsList[argNo] = true;
         }
         argSet.argNum = argCnt;
     }

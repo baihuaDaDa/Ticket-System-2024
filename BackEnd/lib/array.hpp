@@ -21,9 +21,16 @@ namespace baihua {
 
         explicit Array(const std::string &str, const char ch = '|', const std::string &null_string = "_") {
             if (str != null_string) {
-                std::stringstream ss(str);
-                int ind = 0;
-                while (std::getline(ss, _data[ind++], ch));
+                int len = str.size(), ptr = 0;
+                std::string substring;
+                for (int i = 0; i < len; i++) {
+                    if (str[i] != ch) substring += str[i];
+                    if (str[i] == ch || i == len - 1) {
+                        std::stringstream sstr(substring);
+                        sstr >> _data[ptr++];
+                        substring.clear();
+                    }
+                }
             }
         }
 

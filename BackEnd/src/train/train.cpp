@@ -62,6 +62,13 @@ namespace ticket {
         os << transfer.first << '\n' << transfer.second;
     }
 
+    TrainManager::TrainManager(const std::string &filename) : trainMap(filename + "Map"), trainData(filename + "Data"),
+                                                              dailyTrainMap("Daily" + filename + "Map"), dailyTrainData("Daily" + filename + "Data"),
+                                                              staData(filename + "StationData") {
+        if (!trainData.isFileExist()) trainData.initialize();
+        if (!dailyTrainData.isFileExist()) dailyTrainData.initialize();
+    }
+
     void TrainManager::add_train(std::ostream &os, const ull &_i, int _n, int _m, const stationsType &_s,
                                  const pricesType &_p, const Clock &_x, const ttsType &_t, const oType &_o,
                                  const baihua::pair<Date, Date> &_d, char _y) {
@@ -273,6 +280,10 @@ namespace ticket {
         }
         static Train train;
         trainData.SingleRead(train, dailyTrainAddr[0].trainAddr);
+        if (_n > train.seatNum) {
+            os << -1;
+            return ret;
+        }
         int start = -1, end = -1;
         for (int i = 0; i < train.staNum; ++i) {
             if (start == -1) {
@@ -294,6 +305,7 @@ namespace ticket {
         Time startTime{ret.startDate, train.startClock};
         ret.from = startTime + train.travelTimes[start];
         ret.to = startTime + train.travelTimes[end];
+        ret.price = train.prices[end] - train.prices[start];
         static seatsType dailyTrain;
         int addr = dailyTrainAddr[0].seatAddr + (ret.startDate - dailyTrainAddr[0].saleDate.first);
         dailyTrainData.SingleRead(dailyTrain, addr);

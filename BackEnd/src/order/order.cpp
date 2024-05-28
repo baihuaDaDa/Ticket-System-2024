@@ -28,7 +28,7 @@ namespace ticket {
     }
 
     OrderManager::OrderManager(const std::string &filename) : orderMap(filename + "Map"),
-                                                              queueOrderMap(filename + "QueueMap"),
+                                                              queueOrderMap("Queue" + filename + "Map"),
                                                               orderData(filename + "Data") {
         if (!orderData.isFileExist()) orderData.initialize();
     }
@@ -54,11 +54,11 @@ namespace ticket {
     }
 
     // TODO 已经退订的应该也算订单吧？
-    bool OrderManager::refund_ticket(std::ostream &os, const ticket::ull &_u, int _n, seatsType &seats) {
+    baihua::pair<bool, Order> OrderManager::refund_ticket(std::ostream &os, const ticket::ull &_u, int _n) {
         auto orderIndex = orderMap.Find(_u);
         if (orderIndex.size() < _n) {
             os << -1;
-            return false;
+            return baihua::pair<bool, Order>{false, Order()};
         }
         static Order order;
         orderData.SingleRead(order, orderIndex[_n - 1].addr);
@@ -66,29 +66,8 @@ namespace ticket {
             // TODO 可用线段树优化
             order.status = 2;
             orderData.SingleUpdate(order, orderIndex[_n - 1].addr);
-            for (int i = order.staNo.first; i <= order.staNo.second; ++i)
-                seats[i] += order.num;
-            QueueOrderIndex queueOrderIndex{baihua::hash(order.trainID), order.startDate};
-            auto queueOrderAddr = queueOrderMap.Find(queueOrderIndex);
-            static Order queueOrder;
-            for (auto &elem: queueOrderAddr) {
-                bool success = true;
-                orderData.SingleRead(queueOrder, elem.addr);
-                for (int i = queueOrder.staNo.first; i <= queueOrder.staNo.second; ++i)
-                    if (seats[i] < queueOrder.num) {
-                        success = false;
-                        break;
-                    }
-                if (success) {
-                    for (int i = queueOrder.staNo.first; i <= queueOrder.staNo.second; ++i)
-                        seats[i] -= queueOrder.num;
-                    queueOrder.status = 0;
-                    orderData.SingleUpdate(queueOrder, elem.addr);
-                    queueOrderMap.Delete(queueOrderIndex, elem);
-                }
-            }
             os << 0;
-            return true;
+            return baihua::pair<bool, Order>{true, order};
         } else if (order.status == 1) {
             order.status = 2;
             orderData.SingleUpdate(order, orderIndex[_n - 1].addr);
@@ -100,10 +79,34 @@ namespace ticket {
                     break;
                 }
             os << 0;
-            return false;
+            return baihua::pair<bool, Order>{false, order};
         } else {
             os << -1;
-            return false;
+            return baihua::pair<bool, Order>{false, order};
+        }
+    }
+
+    void OrderManager::push_queue(seatsType &seats, const Order &order) {
+        for (int i = order.staNo.first; i <= order.staNo.second; ++i)
+            seats[i] += order.num;
+        QueueOrderIndex queueOrderIndex{baihua::hash(order.trainID), order.startDate};
+        auto queueOrderAddr = queueOrderMap.Find(queueOrderIndex);
+        static Order queueOrder;
+        for (auto &elem: queueOrderAddr) {
+            bool success = true;
+            orderData.SingleRead(queueOrder, elem.addr);
+            for (int i = queueOrder.staNo.first; i <= queueOrder.staNo.second; ++i)
+                if (seats[i] < queueOrder.num) {
+                    success = false;
+                    break;
+                }
+            if (success) {
+                for (int i = queueOrder.staNo.first; i <= queueOrder.staNo.second; ++i)
+                    seats[i] -= queueOrder.num;
+                queueOrder.status = 0;
+                orderData.SingleUpdate(queueOrder, elem.addr);
+                queueOrderMap.Delete(queueOrderIndex, elem);
+            }
         }
     }
 

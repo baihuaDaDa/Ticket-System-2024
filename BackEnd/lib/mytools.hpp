@@ -11,12 +11,22 @@ namespace baihua {
 
     // left-closed and right-open
     // unsigned
-    unsigned int string_to_int(const std::string &str, size_t beg, size_t end) {
-        unsigned int result = 0;
+    int string_to_int(const std::string &str, size_t beg, size_t end) {
+        int result = 0;
         for (size_t i = beg; i < end; ++i) {
             if (!std::isdigit(str[i])) throw invalid_string();
             result <<= 1;
             result += str[i] - '0';
+        }
+        return result;
+    }
+
+    int default_string_to_int(const std::string &str) {
+        int result = 0;
+        for (char i : str) {
+            if (!std::isdigit(i)) throw invalid_string();
+            result <<= 1;
+            result += i - '0';
         }
         return result;
     }

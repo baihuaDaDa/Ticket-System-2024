@@ -101,7 +101,7 @@
 ##### [N] `add_user`
 
 - 参数列表
-  - `-c -u -p -length -m -g`
+  - `-c -u -p -n -m -g`
 - 返回值
   - 注册成功：`0`
   - 注册失败：`-1`
@@ -109,7 +109,7 @@
   - `-c` 已登录，且新用户的权限低于 `-c` 的权限
 
 - 说明
-  - 当前用户 `-c`（`<cur_username>`），创建一个账户名为 `-u`（`<username>`），密码为 `-p`（`<password>`），用户真实姓名为 `-length`（`<name>`），用户邮箱为 `-m`（`<mailAddr>`），权限为 `-g`（`<privilege>`）的用户
+  - 当前用户 `-c`（`<cur_username>`），创建一个账户名为 `-u`（`<username>`），密码为 `-p`（`<password>`），用户真实姓名为 `-n`（`<name>`），用户邮箱为 `-m`（`<mailAddr>`），权限为 `-g`（`<privilege>`）的用户
   - 特别地，创建第一个用户时，新用户权限为 `10`，不受上述权限规则约束。具体来讲，当创建第一个用户时，忽略 `-c` 和 `-g` 参数，并认为新用户优先级为 `10`
   - 如果 `<username>` 已经存在则注册失败
 
@@ -169,7 +169,7 @@
 
   - 参数列表
 
-    `-c -u (-p) (-length) (-m) (-g)`
+    `-c -u (-p) (-n) (-m) (-g)`
 
   - 说明
 
@@ -187,11 +187,11 @@
 
   - 参数列表
   
-    `-i -length -m -s -p -x -t -o -d -y`
+    `-i -n -m -s -p -x -t -o -d -y`
   
   - 说明
   
-     添加 `<trainID>` 为 `-i`，`<stationNum>` 为 `-length`，`<seatNum>` 为 `-m`，`<stations>` 为 `-s`，`<prices>` 为 `-p`，`<startTime>` 为 `-x`，`<travelTimes>` 为 `-t`，`<stopoverTimes>` 为 `-o`，`<saleDate>` 为 `-d`，`<type>` 为 `-y` 的车次。
+     添加 `<trainID>` 为 `-i`，`<stationNum>` 为 `-n`，`<seatNum>` 为 `-m`，`<stations>` 为 `-s`，`<prices>` 为 `-p`，`<startTime>` 为 `-x`，`<travelTimes>` 为 `-t`，`<stopoverTimes>` 为 `-o`，`<saleDate>` 为 `-d`，`<type>` 为 `-y` 的车次。
     由于 `-s`、`-p`、`-t`、`-o` 和 `-d` 由多个值组成，输入时两个值之间以 `|` 隔开（仍是一个不含空格的字符串）。
     
     输入保证火车的座位数大于 0,站的数量不少于 2 不多于 100，且如果火车只有两站 `-o` 后的参数用下划线代替（见举例2）,且火车不会经过同一个站两次。
@@ -205,12 +205,12 @@
     
   - 举例1：
   
-    `>[666] add_train -i HAPPY_TRAINA -length 3 -m 1000 -s 上院|中院|下院 -p 114|514 -x 19:19 -t 600|600 -o 5 -d 06-01|08-17 -y G`
+    `>[666] add_train -i HAPPY_TRAINA -n 3 -m 1000 -s 上院|中院|下院 -p 114|514 -x 19:19 -t 600|600 -o 5 -d 06-01|08-17 -y G`
     
     `[666] 0`
   - 举例2：
   
-    `>[667] add_train -i HAPPY_TRAINB -length 2 -m 1000 -s 上院|下院 -p 114 -x 19:19 -t 600 -o _ -d 06-01|08-17 -y G`
+    `>[667] add_train -i HAPPY_TRAINB -n 2 -m 1000 -s 上院|下院 -p 114 -x 19:19 -t 600 -o _ -d 06-01|08-17 -y G`
     
     `[667] 0`
 
@@ -338,11 +338,11 @@
 ##### [SF] `buy_ticket`
 
   - 参数列表
-    `-u -i -d -length -f -t (-q false)`
+    `-u -i -d -n -f -t (-q false)`
     
   - 说明
     
-    用户 `-u` (`<username>`) 购买：车次 `-i` (`<trainID>`)，日期为 `-d`，从站 `-f` 到站 `-t` 的车票 `-length` 张。
+    用户 `-u` (`<username>`) 购买：车次 `-i` (`<trainID>`)，日期为 `-d`，从站 `-f` 到站 `-t` 的车票 `-n` 张。
     
     `-q`可选 `false` 或 `true`，若为 `true`，表明在**余票不足**的情况下愿意接受候补购票，当有余票时**立即**视为此用户购买了车票，且保证购买的车票的数量大于 0。请注意：这里的日期是列车从 `-f` 出发的日期，不是从列车始发站出发的日期。
     
@@ -360,11 +360,11 @@
   
     （上接查询车票的例子，假设用户均已登录）
   
-    `>[671] buy_ticket -u Texas -i HAPPY_TRAIN -d 08-17 -length 800 -f 中院 -t 下院`
+    `>[671] buy_ticket -u Texas -i HAPPY_TRAIN -d 08-17 -n 800 -f 中院 -t 下院`
   
     `[671] 411200`
   
-    `>[672] buy_ticket -u Lappland -i HAPPY_TRAIN -d 08-16 -length 500 -f 上院 -t 下院 -q true`
+    `>[672] buy_ticket -u Lappland -i HAPPY_TRAIN -d 08-16 -n 500 -f 上院 -t 下院 -q true`
   
     `[672] queue`
     
@@ -420,11 +420,11 @@
 
   - 参数列表
 
-    `-u (-length 1)`
+    `-u (-n 1)`
 
   - 说明
 
-    用户 `-u` (`<username>`）退订从新到旧（即 `query_order` 的返回顺序）第 `-length` 个 (1-base) 订单。
+    用户 `-u` (`<username>`）退订从新到旧（即 `query_order` 的返回顺序）第 `-n` 个 (1-base) 订单。
 
     权限要求：`-u` 已登录。
 

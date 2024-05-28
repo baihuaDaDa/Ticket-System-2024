@@ -77,6 +77,7 @@ namespace ticket {
         Time from;
         Time to;
         baihua::pair<int, int> staNo;
+        int price; // total
 
         TicketOrder(const Date &date) : success_and_queue(false, false), startDate(date), from(), to(), staNo() {}
 
@@ -105,6 +106,8 @@ namespace ticket {
         baihua::BPT<ull, Station, baihua::CmpUll, CmpStation> staData;
 
     public:
+        TrainManager(const std::string &filename);
+
         void add_train(std::ostream &os, const ull &_i, int _n, int _m, const stationsType &_s,
                        const pricesType &_p, const Clock &_x, const ttsType &_t, const oType &_o,
                        const baihua::pair<Date, Date> &_d, char _y);

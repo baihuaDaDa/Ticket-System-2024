@@ -56,11 +56,13 @@ namespace ticket {
         explicit OrderManager(const std::string &filename);
 
         void buy_ticket(bool queue, const ull &_u, const trainIDType &_i, const Date &startDate, int _n,
-                        int prices, const ftType &_f, const ftType &_t, baihua::pair<int, int> staNo, int timeTag);
+                        int price, const ftType &_f, const ftType &_t, baihua::pair<int, int> staNo, int timeTag);
 
         void query_order(std::ostream &os, const ull &_u);
 
-        bool refund_ticket(std::ostream &os, const ull &_u, int _n, seatsType &seats);
+        baihua::pair<bool, Order> refund_ticket(std::ostream &os, const ull &_u, int _n);
+
+        void push_queue(seatsType &seats, const Order &order);
 
     };
 
