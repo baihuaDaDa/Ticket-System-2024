@@ -34,7 +34,8 @@ namespace ticket {
     }
 
     void System::modify_profile(std::ostream &os, const ArgSet &argSet) {
-        userManager.modify_profile(os, baihua::hash(argSet.args['c' - 'a']), baihua::hash(argSet.args['u' - 'a']),
+        userManager.modify_profile(os, baihua::hash(argSet.args['c' - 'a']),
+                                   baihua::hash(argSet.args['u' - 'a']), argSet.args['u' - 'a'],
                                    baihua::pair<bool, pwdType>{argSet.argsList['p' - 'a'], argSet.args['p' - 'a']},
                                    baihua::pair<bool, uNameType>{argSet.argsList['n' - 'a'], argSet.args['n' - 'a']},
                                    baihua::pair<bool, mailType>{argSet.argsList['m' - 'a'], argSet.args['m' - 'a']},

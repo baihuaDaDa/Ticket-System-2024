@@ -38,6 +38,7 @@ namespace ticket {
         UserAddr newUserIndex(userData.SingleAppend(newUser), (userNum == 0 ? 10 : _g));
         userMap.Insert(_u, newUserIndex);
         ++userNum;
+        os << 0;
     }
 
     void UserManager::login(std::ostream &os, const ull &_u, const pwdType &_p) {
@@ -56,7 +57,7 @@ namespace ticket {
             os << -1;
             return;
         }
-        userList[_u] = userIndex[0].addr;
+        userList[_u] = userIndex[0].privilege;
         os << 0;
     }
 
@@ -76,7 +77,7 @@ namespace ticket {
             return;
         }
         auto userIndex = userMap.Find(_u);
-        if (userIndex.empty() || userIndex[0].privilege > iter->second) {
+        if (userIndex.empty() || (userIndex[0].privilege >= iter->second && _u != _c)) {
             os << -1;
             return;
         }
@@ -88,7 +89,7 @@ namespace ticket {
     // 已登录的userList别忘了改权限
     // 如果自己修改自己的权限，但是修改成同样的值，是否算修改失败？ 当然算，按规则来。
     // 如果修改成同样的值修改成功后是否需要输出？ 当然。
-    void UserManager::modify_profile(std::ostream &os, const ticket::ull &_c, const ticket::ull &_u,
+    void UserManager::modify_profile(std::ostream &os, const ticket::ull &_c, const ticket::ull &_u, const uidType &username,
                                      const baihua::pair<bool, pwdType> &_p, const baihua::pair<bool, uNameType> &_n,
                                      const baihua::pair<bool, mailType> &_m, const baihua::pair<bool, int> &_g) {
         auto iter = userList.find(_c);
@@ -104,17 +105,19 @@ namespace ticket {
         static User user;
         userData.SingleRead(user, userIndex[0].addr);
         if (_p.first || _n.first || _m.first) {
-            if (_p.first) os << (user.pwd = _p.second) << ' ';
-            if (_n.first) os << (user.uName = _n.second) << ' ';
-            if (_m.first) os << (user.mail = _m.second) << ' ';
+            if (_p.first) user.pwd = _p.second;
+            if (_n.first) user.uName = _n.second;
+            if (_m.first) user.mail = _m.second;
             userData.SingleUpdate(user, userIndex[0].addr);
         }
         if (_g.first) {
-            iter->second = _g.second;
+            auto uIter = userList.find(_u);
+            if (uIter != userList.end()) uIter->second = _g.second;
             userMap.Delete(_u, userIndex[0]);
-            os << (userIndex[0].privilege = _g.second);
+            userIndex[0].privilege = _g.second;
             userMap.Insert(_u, userIndex[0]);
         }
+        os << username << ' ' << user.uName << ' ' << user.mail << ' ' << userIndex[0].privilege;
     }
 
     bool UserManager::if_login(const ull &_u) {

@@ -12,7 +12,10 @@ namespace ticket {
         argSet.timeTag = baihua::string_to_int(token, 1, token.size() - 1);
         std::getline(ss, token, ' ');
         for (int i = 0; i < cmdNum_Max; ++i)
-            if (token == CMD[i]) argSet.cmdNo = i;
+            if (token == CMD[i]) {
+                argSet.cmdNo = i;
+                break;
+            }
         int argCnt = 0, argNo;
         while (std::getline(ss, token, ' ')) {
             ++argCnt;

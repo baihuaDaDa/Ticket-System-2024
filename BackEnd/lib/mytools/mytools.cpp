@@ -8,7 +8,7 @@ namespace baihua {
         int result = 0;
         for (size_t i = beg; i < end; ++i) {
             if (!std::isdigit(str[i])) throw invalid_string();
-            result <<= 1;
+            result *= 10;
             result += str[i] - '0';
         }
         return result;
@@ -18,7 +18,7 @@ namespace baihua {
         int result = 0;
         for (char i : str) {
             if (!std::isdigit(i)) throw invalid_string();
-            result <<= 1;
+            result *= 10;
             result += i - '0';
         }
         return result;

@@ -44,9 +44,9 @@ namespace ticket {
 
         void query_profile(std::ostream &os, const ull &_c, const ull &_u, const uidType &username);
 
-        void modify_profile(std::ostream &os, const ull &_c, const ull &_u, const baihua::pair<bool, pwdType> &_p,
-                            const baihua::pair<bool, uNameType> &_n, const baihua::pair<bool, mailType> &_m,
-                            const baihua::pair<bool, int> &_g);
+        void modify_profile(std::ostream &os, const ull &_c, const ull &_u, const uidType &username,
+                            const baihua::pair<bool, pwdType> &_p, const baihua::pair<bool, uNameType> &_n,
+                            const baihua::pair<bool, mailType> &_m, const baihua::pair<bool, int> &_g);
 
         bool if_login(const ull &_u);
 
