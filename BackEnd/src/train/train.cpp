@@ -42,7 +42,8 @@ namespace ticket {
         else if ((flag = baihua::CmpInt(lhs.time, rhs.time)) != 0)
             return flag;
         else if ((flag = baihua::CmpStr(lhs.first.trainID, rhs.first.trainID)) != 0) return flag;
-        else return baihua::CmpStr(lhs.second.trainID, rhs.second.trainID);    }
+        else return baihua::CmpStr(lhs.second.trainID, rhs.second.trainID);
+    }
 
     void Train::print_train(std::ostream &os, int ind, const Date &startDate) {
         Time arriveTime = Time{startDate, startClock} + travelTimes[ind];
@@ -61,10 +62,13 @@ namespace ticket {
 
     std::ostream &operator<<(std::ostream &os, const Transfer &transfer) {
         os << transfer.first << '\n' << transfer.second;
+        return os;
     }
 
-    TrainManager::TrainManager(const std::string &filename) : trainMap(filename + "Map"), trainData(filename + "Data.bin"),
-                                                              dailyTrainMap("Daily" + filename + "Map"), dailyTrainData("Daily" + filename + "Data.bin"),
+    TrainManager::TrainManager(const std::string &filename) : trainMap(filename + "Map"),
+                                                              trainData(filename + "Data.bin"),
+                                                              dailyTrainMap("Daily" + filename + "Map"),
+                                                              dailyTrainData("Daily" + filename + "Data.bin"),
                                                               staData(filename + "StationData") {
         if (!trainData.isFileExist()) trainData.initialize();
         if (!dailyTrainData.isFileExist()) dailyTrainData.initialize();
@@ -183,10 +187,11 @@ namespace ticket {
             if (flag == -1) ++sp;
             if (flag == 0) {
                 if (ss.staNo < ts.staNo) {
-                    Date startDate = _minus(_d, _minus(ss.arriveClock, ss.time).second);
+                    Clock sLeavingClock = _add(ss.arriveClock, ss.stopoverTime).first;
+                    Date startDate = _minus(_d, _minus(sLeavingClock, ss.time + ss.stopoverTime).second);
                     if (CmpDate(startDate, ss.saleDate.first) >= 0 &&
                         CmpDate(startDate, ss.saleDate.second) <= 0) {
-                        Ticket ticket{ss.trainID, {start, Time{_d, ss.arriveClock} + ss.stopoverTime},
+                        Ticket ticket{ss.trainID, {start, Time{_d, sLeavingClock}},
                                       {to, Time{}}, ts.price - ss.price, 0, 0};
                         ticket.time = ts.time - ss.time - ss.stopoverTime;
                         ticket.to.second = ticket.from.second + ticket.time;
@@ -222,7 +227,8 @@ namespace ticket {
         bool exist = false;
         static Transfer transfer;
         for (auto &ss: sStations) {
-            Date sStartDate = _minus(_d, _minus(ss.arriveClock, ss.time).second);
+            Clock sLeavingClock = _add(ss.arriveClock, ss.stopoverTime).first;
+            Date sStartDate = _minus(_d, _minus(sLeavingClock, ss.time + ss.stopoverTime).second);
             if (CmpDate(sStartDate, ss.saleDate.first) >= 0 &&
                 CmpDate(sStartDate, ss.saleDate.second) <= 0) {
                 auto sDailyTrainAddr = dailyTrainMap.Find(ss.hashTrainID);
@@ -232,7 +238,7 @@ namespace ticket {
                 static Train sTrain;
                 trainData.SingleRead(sTrain, sDailyTrainAddr[0].trainAddr);
                 Time sStartTime{sStartDate, sTrain.startClock};
-                ftType firstFrom{start, Time{_d, ss.arriveClock} + sTrain.stopoverTimes[ss.staNo]};
+                ftType firstFrom{start, Time{_d, sLeavingClock}};
                 for (auto &ts: tStations) {
                     if (ts.hashTrainID != ss.hashTrainID) {
                         auto trainAddr = trainMap.Find(ts.hashTrainID);
@@ -244,36 +250,44 @@ namespace ticket {
                                     Time sTranArriveTime{sStartTime + sTrain.travelTimes[i]};
                                     auto result = _minus(ts.arriveClock,
                                                          ts.time - tTrain.travelTimes[j] - tTrain.stopoverTimes[j]);
-                                    Time tTranStartTime{sTranArriveTime.date, result.first};
-                                    if (CmpClock(sTranArriveTime.clock, tTranStartTime.clock) == 1)
-                                        tTranStartTime.date.add(1);
-                                    Date tStartDate = _minus(tTranStartTime.date, _minus(tTranStartTime.clock,
-                                                                                         tTrain.travelTimes[j] +
-                                                                                         tTrain.stopoverTimes[j]).second);
-                                    if (CmpDate(tStartDate, ts.saleDate.first) >= 0 &&
-                                        CmpDate(tStartDate, ts.saleDate.second) <= 0) {
-                                        Time tArriveTime{_add(tTranStartTime.date, result.second), ts.arriveClock};
-                                        Ticket first{ss.trainID, firstFrom, {sTrain.stations[i], sTranArriveTime},
-                                                     sTrain.prices[i] - ss.price, 100001, 0};
-                                        Ticket second{ts.trainID, {tTrain.stations[j], tTranStartTime}, {to, tArriveTime}, ts.price - tTrain.prices[j], 100001, 0};
-                                        Transfer newTransfer{first, second, tArriveTime - firstFrom.second};
-                                        auto tDailyTrainAddr = dailyTrainMap.Find(ts.hashTrainID);
-                                        static seatsType tDailyTrain;
-                                        dailyTrainData.SingleRead(tDailyTrain, tDailyTrainAddr[0].seatAddr +
-                                                                               (tStartDate - tDailyTrainAddr[0].saleDate.first));
-                                        for (int k = ss.staNo; k < i; ++k)
-                                            first.seatNum = std::min(first.seatNum, sDailyTrain[k]);
-                                        for (int k = j; k < ts.staNo; ++k)
-                                            second.seatNum = std::min(second.seatNum, tDailyTrain[k]);
-                                        if (exist) {
-                                            if (_p && CmpTransferTime(transfer, newTransfer) == -1)
-                                                transfer = newTransfer;
-                                            else if (!_p && CmpTransferCost(transfer, newTransfer) == -1)
-                                                transfer = newTransfer;
-                                        } else {
+                                    int days = _minus(result.first,
+                                                      tTrain.travelTimes[j] - tTrain.stopoverTimes[j]).second;
+                                    baihua::pair<Date, Date> dateRange{_add(tTrain.saleDate.first, days),
+                                                                       _add(tTrain.saleDate.second, days)};
+                                    Date tTranLeavingDate{sTranArriveTime.date};
+                                    if (CmpDate(sTranArriveTime.date, dateRange.first) == -1)
+                                        tTranLeavingDate = dateRange.first;
+                                    else if (CmpClock(sTranArriveTime.clock, result.first) == 1)
+                                        tTranLeavingDate.add(1);
+                                    if (CmpDate(tTranLeavingDate, dateRange.second) == 1) continue;
+                                    Time tTranLeavingTime{tTranLeavingDate, result.first};
+                                    Date tStartDate = _minus(tTranLeavingTime.date, _minus(tTranLeavingTime.clock,
+                                                                                           tTrain.travelTimes[j] +
+                                                                                           tTrain.stopoverTimes[j]).second);
+                                    Time tStartTime{tStartDate, tTrain.startClock};
+                                    Time tArriveTime = tStartTime + ts.time;
+                                    Ticket first{ss.trainID, firstFrom, {sTrain.stations[i], sTranArriveTime},
+                                                 sTrain.prices[i] - ss.price, 100001, 0};
+                                    Ticket second{ts.trainID, {tTrain.stations[j], tTranLeavingTime}, {to, tArriveTime},
+                                                  ts.price - tTrain.prices[j], 100001, 0};
+                                    Transfer newTransfer{first, second, tArriveTime - firstFrom.second};
+                                    auto tDailyTrainAddr = dailyTrainMap.Find(ts.hashTrainID);
+                                    static seatsType tDailyTrain;
+                                    dailyTrainData.SingleRead(tDailyTrain, tDailyTrainAddr[0].seatAddr +
+                                                                           (tStartDate -
+                                                                            tDailyTrainAddr[0].saleDate.first));
+                                    for (int k = ss.staNo; k < i; ++k)
+                                        first.seatNum = std::min(first.seatNum, sDailyTrain[k]);
+                                    for (int k = j; k < ts.staNo; ++k)
+                                        second.seatNum = std::min(second.seatNum, tDailyTrain[k]);
+                                    if (exist) {
+                                        if (_p && CmpTransferTime(transfer, newTransfer) == -1)
                                             transfer = newTransfer;
-                                            exist = true;
-                                        }
+                                        else if (!_p && CmpTransferCost(transfer, newTransfer) == -1)
+                                            transfer = newTransfer;
+                                    } else {
+                                        transfer = newTransfer;
+                                        exist = true;
                                     }
                                 }
                             }

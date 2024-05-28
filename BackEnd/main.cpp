@@ -3,7 +3,8 @@
 int main() {
     std::ios::sync_with_stdio(false);
     std::cin.tie(nullptr);
-    freopen("../testcases/TicketSystemData/data/8.in", "r", stdin);
+    std::cin.tie(nullptr);
+    freopen("../testcases/TicketSystemData/data/17.in", "r", stdin);
     freopen("../testcases/TicketSystemData/ans.out", "w", stdout);
     ticket::System system("");
     std::string cmd;
