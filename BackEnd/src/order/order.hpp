@@ -4,7 +4,6 @@
 #include "../db/bpt.hpp"
 #include "../typebase.hpp"
 #include "../lib/STLite/utility.hpp"
-#include "../lib/mytools.hpp"
 
 namespace ticket {
 
@@ -63,6 +62,8 @@ namespace ticket {
         baihua::pair<bool, Order> refund_ticket(std::ostream &os, const ull &_u, int _n);
 
         void push_queue(seatsType &seats, const Order &order);
+
+        void clear();
 
     };
 

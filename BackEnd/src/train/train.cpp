@@ -62,8 +62,8 @@ namespace ticket {
         os << transfer.first << '\n' << transfer.second;
     }
 
-    TrainManager::TrainManager(const std::string &filename) : trainMap(filename + "Map"), trainData(filename + "Data"),
-                                                              dailyTrainMap("Daily" + filename + "Map"), dailyTrainData("Daily" + filename + "Data"),
+    TrainManager::TrainManager(const std::string &filename) : trainMap(filename + "Map"), trainData(filename + "Data.bin"),
+                                                              dailyTrainMap("Daily" + filename + "Map"), dailyTrainData("Daily" + filename + "Data.bin"),
                                                               staData(filename + "StationData") {
         if (!trainData.isFileExist()) trainData.initialize();
         if (!dailyTrainData.isFileExist()) dailyTrainData.initialize();
@@ -341,6 +341,14 @@ namespace ticket {
         int addr = dailyTrainAddr[0].seatAddr + (_d - dailyTrainAddr[0].saleDate.first);
         dailyTrainData.SingleRead(seats, addr);
         return addr;
+    }
+
+    void TrainManager::clear() {
+        trainMap.Clear();
+        trainData.clear();
+        dailyTrainMap.Clear();
+        dailyTrainData.clear();
+        staData.Clear();
     }
 
 }

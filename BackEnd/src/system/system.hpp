@@ -4,12 +4,13 @@
 #include "../user/user.hpp"
 #include "../train/train.hpp"
 #include "../order/order.hpp"
-#include "../cmdprocessor.hpp"
+#include "../cmdprocessor/cmdprocessor.hpp"
 
 namespace ticket {
 
     class System {
     private:
+        bool run;
         UserManager userManager;
         OrderManager orderManager;
         TrainManager trainManager;
@@ -50,6 +51,8 @@ namespace ticket {
         void exit(std::ostream &os, const ArgSet &argSet);
 
         void clean(std::ostream &os, const ArgSet &argSet);
+
+        bool if_run() const;
 
     private:
         void (System::*interface[cmdNum_Max])(std::ostream &os, const ArgSet &argSet) = {&System::add_user,

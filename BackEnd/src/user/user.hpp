@@ -3,8 +3,6 @@
 
 #include "../db/bpt.hpp"
 #include "../typebase.hpp"
-#include "../lib/mytools.hpp"
-#include "../lib/STLite/set.hpp"
 
 namespace ticket {
 
@@ -51,6 +49,8 @@ namespace ticket {
                             const baihua::pair<bool, int> &_g);
 
         bool if_login(const ull &_u);
+
+        void clear();
 
     };
 

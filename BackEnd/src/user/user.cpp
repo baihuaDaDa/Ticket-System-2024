@@ -14,7 +14,7 @@ namespace ticket {
         else return baihua::CmpInt(lhs.privilege, rhs.privilege);
     }
 
-    UserManager::UserManager(const std::string &filename) : userMap(filename + "Map"), userData(filename + "Data") {
+    UserManager::UserManager(const std::string &filename) : userMap(filename + "Map"), userData(filename + "Data.bin") {
         if (!userData.isFileExist()) {
             userData.initialize();
             userNum = 0;
@@ -120,6 +120,13 @@ namespace ticket {
     bool UserManager::if_login(const ull &_u) {
         if (userList.find(_u) == userList.end()) return false;
         else return true;
+    }
+
+    void UserManager::clear() {
+        userMap.Clear();
+        userData.clear();
+        userList.clear();
+        userNum = 0;
     }
 
 }

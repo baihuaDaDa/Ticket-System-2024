@@ -60,6 +60,16 @@ namespace baihua {
             memory_leaf.ReadInfo(head_pos, 1);
         }
 
+        void Clear() {
+            father.clear();
+            father_info.clear();
+            memory_node.clear(-1);
+            memory_leaf.clear(-1);
+            target_index = -1;
+            memory_node.ReadInfo(root_pos, 1);
+            memory_leaf.ReadInfo(head_pos, 1);
+        }
+
         /* Several cases:
          * - No.1 simply insert;
          * - No.2 already exist;

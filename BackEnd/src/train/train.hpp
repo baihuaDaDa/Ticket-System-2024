@@ -131,6 +131,8 @@ namespace ticket {
 
         int read_seats(seatsType &seats, const ull &_i, const Date &_d);
 
+        void clear();
+
     };
 
 }

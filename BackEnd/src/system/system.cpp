@@ -2,7 +2,7 @@
 
 namespace ticket {
 
-    System::System(const std::string &filename) : userManager(filename + "User"),
+    System::System(const std::string &filename) : run(true), userManager(filename + "User"),
                                                   orderManager(filename + "Order"),
                                                   trainManager(filename + "Train") {}
 
@@ -116,12 +116,16 @@ namespace ticket {
     }
 
     void System::exit(std::ostream &os, const ArgSet &argSet) {
-
+        os << "bye";
+        run = false;
     }
 
     void System::clean(std::ostream &os, const ArgSet &argSet) {
-
+        os << 0;
     }
 
+    bool System::if_run() const {
+        return run;
+    }
 
 }

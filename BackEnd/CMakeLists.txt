@@ -12,4 +12,7 @@ add_executable(code main.cpp
         src/system/system.cpp
         src/order/order.cpp
         src/user/user.cpp
-        src/train/train.cpp)
+        src/train/train.cpp
+        src/time/time.cpp
+        src/cmdprocessor/cmdprocessor.cpp
+        lib/mytools/mytools.cpp)

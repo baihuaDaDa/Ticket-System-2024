@@ -1,7 +1,8 @@
 #ifndef TICKET_SYSTEM_TYPEBASE_HPP
 #define TICKET_SYSTEM_TYPEBASE_HPP
 
-#include "time.hpp"
+#include "time/time.hpp"
+#include "../lib/mytools/mytools.hpp"
 #include "../lib/constantLengthString.hpp"
 #include "../lib/array.hpp"
 

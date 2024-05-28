@@ -1,13 +1,6 @@
-#ifndef TICKET_SYSTEM_MYTOOLS_HPP
-#define TICKET_SYSTEM_MYTOOLS_HPP
-
-#include "STLite/exceptions.hpp"
-#include "constantLengthString.hpp"
-#include <string>
+#include "mytools.hpp"
 
 namespace baihua {
-
-    using ull = unsigned long long;
 
     // left-closed and right-open
     // unsigned
@@ -64,6 +57,8 @@ namespace baihua {
         else return 1;
     }
 
-}
+    template ull hash<21ull>(const ConstLenStr<21ull> &str);
 
-#endif //TICKET_SYSTEM_MYTOOLS_HPP
+    template ull hash<41ull>(const ConstLenStr<41ull> &str);
+
+}

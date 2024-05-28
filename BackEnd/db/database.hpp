@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <filesystem>
 #include "STLite/list.hpp"
 #include "STLite/map.hpp"
 
@@ -38,6 +39,11 @@ namespace baihua {
             for (int i = 0; i < info_len; ++i)
                 file.write(reinterpret_cast<char *>(&info), sizeof(int));
             file.close();
+        }
+
+        void clear(int info = 0, const string &FN = "") {
+            std::filesystem::remove(filename);
+            initialize(info, FN);
         }
 
         // Read the @n-th info into @tmp. (1-base)

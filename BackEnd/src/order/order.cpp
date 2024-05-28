@@ -29,7 +29,7 @@ namespace ticket {
 
     OrderManager::OrderManager(const std::string &filename) : orderMap(filename + "Map"),
                                                               queueOrderMap("Queue" + filename + "Map"),
-                                                              orderData(filename + "Data") {
+                                                              orderData(filename + "Data.bin") {
         if (!orderData.isFileExist()) orderData.initialize();
     }
 
@@ -108,6 +108,12 @@ namespace ticket {
                 queueOrderMap.Delete(queueOrderIndex, elem);
             }
         }
+    }
+
+    void OrderManager::clear() {
+        orderMap.Clear();
+        orderData.clear();
+        queueOrderMap.Clear();
     }
 
 }
