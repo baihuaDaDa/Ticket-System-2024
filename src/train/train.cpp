@@ -251,7 +251,7 @@ namespace ticket {
                                     auto result = _minus(ts.arriveClock,
                                                          ts.time - tTrain.travelTimes[j] - tTrain.stopoverTimes[j]);
                                     int days = _minus(result.first,
-                                                      tTrain.travelTimes[j] - tTrain.stopoverTimes[j]).second;
+                                                      tTrain.travelTimes[j] + tTrain.stopoverTimes[j]).second;
                                     baihua::pair<Date, Date> dateRange{_add(tTrain.saleDate.first, days),
                                                                        _add(tTrain.saleDate.second, days)};
                                     Date tTranLeavingDate{sTranArriveTime.date};
@@ -261,9 +261,7 @@ namespace ticket {
                                         tTranLeavingDate.add(1);
                                     if (CmpDate(tTranLeavingDate, dateRange.second) == 1) continue;
                                     Time tTranLeavingTime{tTranLeavingDate, result.first};
-                                    Date tStartDate = _minus(tTranLeavingTime.date, _minus(tTranLeavingTime.clock,
-                                                                                           tTrain.travelTimes[j] +
-                                                                                           tTrain.stopoverTimes[j]).second);
+                                    Date tStartDate = _minus(tTranLeavingTime.date, days);
                                     Time tStartTime{tStartDate, tTrain.startClock};
                                     Time tArriveTime = tStartTime + ts.time;
                                     Ticket first{ss.trainID, firstFrom, {sTrain.stations[i], sTranArriveTime},
