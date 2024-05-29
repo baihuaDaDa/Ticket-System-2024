@@ -20,7 +20,7 @@ namespace ticket {
     typedef baihua::ConstLenStr<trainID_Max> trainIDType;
     typedef baihua::ConstLenStr<staName_Max> staNameType;
 
-    constexpr std::string STATUS[3] = {"success", "pending", "refunded"};
+    const std::string STATUS[3] = {"success", "pending", "refunded"};
 
     typedef baihua::Array<staNameType, staNum_Max> stationsType;
     typedef baihua::Array<ull, staNum_Max> hashStaType;
