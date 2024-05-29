@@ -281,9 +281,9 @@ namespace ticket {
                                     for (int k = j; k < ts.staNo; ++k)
                                         second.seatNum = std::min(second.seatNum, tDailyTrain[k]);
                                     if (exist) {
-                                        if (_p && CmpTransferTime(transfer, newTransfer) == -1)
+                                        if (_p && CmpTransferTime(transfer, newTransfer) == 1)
                                             transfer = newTransfer;
-                                        else if (!_p && CmpTransferCost(transfer, newTransfer) == -1)
+                                        else if (!_p && CmpTransferCost(transfer, newTransfer) == 1)
                                             transfer = newTransfer;
                                     } else {
                                         transfer = newTransfer;
