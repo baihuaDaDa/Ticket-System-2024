@@ -27,8 +27,8 @@ namespace baihua {
     // hash
     template<size_t length>
     ull hash(const ConstLenStr<length> &str) {
-        const ull M = 1e9 + 7;
-        const ull b = 197;
+        const ull M = 998244353;
+        const ull b = 257;
         ull hashCode = 0;
         for (size_t i = 0; i < str.GetSize(); ++i)
             hashCode = (hashCode * b + str[i]) % M;
@@ -36,8 +36,8 @@ namespace baihua {
     }
 
     ull hash(const std::string &str) {
-        const ull M = 1e9 + 7;
-        const ull b = 197;
+        const ull M = 998244353;
+        const ull b = 257;
         ull hashCode = 0;
         for (size_t i = 0; i < str.size(); ++i)
             hashCode = (hashCode * b + str[i]) % M;
