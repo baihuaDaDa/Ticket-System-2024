@@ -241,9 +241,9 @@ namespace ticket {
                 ftType firstFrom{start, Time{_d, sLeavingClock}};
                 for (auto &ts: tStations) {
                     if (ts.hashTrainID != ss.hashTrainID) {
-                        auto trainAddr = trainMap.Find(ts.hashTrainID);
+                        auto tTrainAddr = trainMap.Find(ts.hashTrainID);
                         static Train tTrain;
-                        trainData.SingleRead(tTrain, trainAddr[0].addr);
+                        trainData.SingleRead(tTrain, tTrainAddr[0].addr);
                         for (int i = ss.staNo + 1; i < sTrain.staNum; ++i) {
                             for (int j = 0; j < ts.staNo; ++j) {
                                 if (sTrain.hashStations[i] == tTrain.hashStations[j]) {
@@ -270,7 +270,6 @@ namespace ticket {
                                                  sTrain.prices[i] - ss.price, 100001, 0};
                                     Ticket second{ts.trainID, {tTrain.stations[j], tTranLeavingTime}, {to, tArriveTime},
                                                   ts.price - tTrain.prices[j], 100001, 0};
-                                    Transfer newTransfer{first, second, tArriveTime - firstFrom.second};
                                     auto tDailyTrainAddr = dailyTrainMap.Find(ts.hashTrainID);
                                     static seatsType tDailyTrain;
                                     dailyTrainData.SingleRead(tDailyTrain, tDailyTrainAddr[0].seatAddr +
@@ -280,6 +279,7 @@ namespace ticket {
                                         first.seatNum = std::min(first.seatNum, sDailyTrain[k]);
                                     for (int k = j; k < ts.staNo; ++k)
                                         second.seatNum = std::min(second.seatNum, tDailyTrain[k]);
+                                    Transfer newTransfer{first, second, tArriveTime - firstFrom.second};
                                     if (exist) {
                                         if (_p && CmpTransferTime(transfer, newTransfer) == 1)
                                             transfer = newTransfer;
