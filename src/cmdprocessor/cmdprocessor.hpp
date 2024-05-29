@@ -19,8 +19,10 @@ namespace ticket {
         bool argsList[argNum_Max];
         ArgSet() : cmdNo(-1), argNum(0), timeTag(0), args() {}
         void initialize() {
-            for (int i = 0; i < argNum_Max; ++i)
+            for (int i = 0; i < argNum_Max; ++i) {
                 argsList[i] = false;
+                args[i].clear();
+            }
         }
     };
 
